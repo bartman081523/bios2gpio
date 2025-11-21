@@ -1,0 +1,254 @@
+# GPIO Extraction Tool for Intel Z690/Alder Lake Platforms
+
+## Goal
+
+Develop a static GPIO extraction tool that can extract GPIO configurations directly from vendor BIOS images without requiring `inteltool` to run on the specific hardware. The tool will be validated using the MSI PRO Z690-A (ms7d25) as a reference platform (already supported in coreboot), then applied to extract GPIO configuration for the ASRock Z690 Steel Legend.
+
+## Background
+
+Currently, GPIO configuration for Intel boards is obtained by:
+1. Booting vendor firmware on the target hardware
+2. Running `inteltool` to dump live GPIO registers
+3. Using `intelp2m` to convert register dumps to coreboot macros
+
+This approach requires physical access to each specific board model. The proposed method extracts GPIO tables directly from the vendor BIOS image by:
+- Parsing UEFI firmware modules
+- Locating GPIO configuration data structures
+- Decoding pad configuration tables
+- Generating coreboot-compatible GPIO headers
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Verification Strategy**
+> This tool's accuracy will be validated by comparing extracted GPIO configurations from MSI Z690 vendor BIOS against the existing coreboot [gpio.h](file:///run/media/julian/ML2/Python/coreboot/coreboot/src/mainboard/msi/ms7d25/gpio.h) for that board. A match rate of 90-95% will be considered successful validation.
+
+> [!WARNING]
+> **Limitations**
+> - Vendors that heavily customize or obfuscate GPIO initialization code may not be compatible
+> - Some GPIO pads may be reconfigured at runtime by DXE drivers or ACPI methods
+> - The tool targets Intel FSP-based platforms; non-FSP platforms may require different approaches
+
+## Proposed Changes
+
+### Core Extraction Pipeline
+
+#### [NEW] [bios2gpio.py](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/bios2gpio.py)
+
+Main orchestration script that coordinates the entire extraction pipeline:
+- Accepts vendor BIOS image as input
+- Invokes firmware extraction, GPIO table detection, parsing, and output generation
+- Provides CLI interface with options for platform selection, output formats, etc.
+
+---
+
+### Firmware Extraction Module
+
+#### [NEW] [uefi_extractor.py](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/uefi_extractor.py)
+
+Handles UEFI firmware image parsing and module extraction:
+- Uses `ifdtool` to split IFD regions (Descriptor, ME, BIOS, etc.)
+- Invokes `UEFIExtract` to extract PEI/DXE modules from BIOS region
+- Organizes extracted modules into a structured directory tree
+- Provides module classification based on names and GUIDs
+
+---
+
+### GPIO Table Detection Module
+
+#### [NEW] [gpio_detector.py](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/gpio_detector.py)
+
+Implements heuristics to locate GPIO configuration tables within UEFI modules:
+- **Name-based filtering**: Searches for modules with names containing `Gpio`, `PchInit`, `SiliconInit`, etc.
+- **Binary pattern scanning**: Looks for repeated fixed-size structures matching GPIO pad configuration layout
+- **Signature validation**: Verifies pad numbers are within valid ranges for the target SoC
+- Returns candidate tables with confidence scores
+
+---
+
+### Platform-Specific Definitions
+
+#### [NEW] [platforms/alderlake.py](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/platforms/alderlake.py)
+
+Defines Alder Lake / Z690-specific GPIO structures and metadata:
+- GPIO pad configuration struct layout (DW0, DW1, DW2, DW3 register definitions)
+- GPIO group definitions (GPP_A, GPP_B, GPP_C, etc.) with pad ranges
+- Bitfield definitions for mode, direction, pull-up/down, reset domain, interrupt config
+- Known UEFI module GUIDs for Alder Lake FSP
+
+```python
+# Example structure definition
+class AlderLakeGpioPadConfig:
+    """
+    Represents a single GPIO pad configuration entry.
+    Typically 16 bytes: pad_id (2), flags (2), dw0 (4), dw1 (4), dw2 (4)
+    """
+    def __init__(self, raw_bytes):
+        self.pad_id = struct.unpack('<H', raw_bytes[0:2])[0]
+        self.flags = struct.unpack('<H', raw_bytes[2:4])[0]
+        self.dw0 = struct.unpack('<I', raw_bytes[4:8])[0]
+        self.dw1 = struct.unpack('<I', raw_bytes[8:12])[0]
+        # DW2/DW3 may not always be present in vendor tables
+```
+
+---
+
+### GPIO Parser Module
+
+#### [NEW] [gpio_parser.py](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/gpio_parser.py)
+
+Decodes binary GPIO tables into logical pad configurations:
+- Reads raw binary data from detected tables
+- Interprets each entry using platform-specific struct definitions
+- Extracts logical properties from register bitfields:
+  - Pad mode (GPIO vs native function)
+  - Direction (input/output)
+  - Output value (high/low)
+  - Pull resistor configuration
+  - Reset domain (RSMRST, PLTRST, DEEP)
+  - Interrupt configuration
+- Outputs structured data (JSON, Python dict, etc.)
+
+---
+
+### Output Generation Module
+
+#### [NEW] [gpio_generator.py](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/gpio_generator.py)
+
+Generates coreboot-compatible GPIO configuration files:
+- Converts parsed GPIO data to coreboot macro invocations
+- Supports macros like `PAD_CFG_GPO`, `PAD_CFG_GPI_TRIG_OWN`, `PAD_CFG_NF`, etc.
+- Formats output to match coreboot style (groups, comments, alignment)
+- Generates both [gpio.h](file:///run/media/julian/ML2/Python/coreboot/coreboot/src/mainboard/msi/ms7d25/gpio.h) format and intermediate JSON for analysis
+
+Example output:
+```c
+/* GPP_B0 - GPIO */
+PAD_CFG_GPI_TRIG_OWN(GPP_B0, NONE, PLTRST, OFF, ACPI),
+/* GPP_B12 - SLP_S0# */
+PAD_CFG_NF(GPP_B12, NONE, PLTRST, NF1),
+```
+
+---
+
+### Verification and Comparison Module
+
+#### [NEW] [gpio_comparator.py](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/gpio_comparator.py)
+
+Compares extracted GPIO configurations against reference data:
+- Parses existing coreboot [gpio.h](file:///run/media/julian/ML2/Python/coreboot/coreboot/src/mainboard/msi/ms7d25/gpio.h) files into normalized format
+- Compares extracted vs reference configurations pad-by-pad
+- Calculates match statistics:
+  - Exact matches
+  - Partial matches (same pad, different properties)
+  - Missing pads
+  - Extra pads
+- Generates detailed diff reports highlighting discrepancies
+
+---
+
+### Supporting Files
+
+#### [NEW] [requirements.txt](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/requirements.txt)
+
+Python dependencies:
+```
+pyelftools>=0.29
+```
+
+#### [NEW] [README.md](file:///run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/README.md)
+
+Documentation covering:
+- Tool overview and use cases
+- Installation instructions
+- Usage examples
+- Platform support matrix
+- Troubleshooting guide
+- Technical details on GPIO table detection
+
+## Verification Plan
+
+### Phase 1: MSI Z690 Validation
+
+1. **Obtain MSI PRO Z690-A vendor BIOS**
+   - Download latest BIOS update from MSI website
+   - Extract raw BIOS region
+
+2. **Extract GPIO configuration**
+   ```bash
+   ./bios2gpio.py --platform alderlake \
+                  --input msi_z690_vendor.bin \
+                  --output msi_extracted_gpio.h \
+                  --json msi_extracted_gpio.json
+   ```
+
+3. **Compare against coreboot reference**
+   ```bash
+   ./gpio_comparator.py \
+       --extracted msi_extracted_gpio.json \
+       --reference src/mainboard/msi/ms7d25/gpio.h \
+       --platform alderlake \
+       --report msi_comparison_report.txt
+   ```
+
+4. **Success criteria**
+   - ≥90% exact pad matches
+   - Remaining differences in non-critical fields or intentional coreboot modifications
+   - No missing critical pads (SPI, power control, reset, etc.)
+
+### Phase 2: ASRock Z690 Application
+
+1. **Obtain ASRock Z690 Steel Legend vendor BIOS**
+   - Download from ASRock support site
+
+2. **Extract GPIO configuration**
+   ```bash
+   ./bios2gpio.py --platform alderlake \
+                  --input asrock_z690_steel_legend.bin \
+                  --output asrock_z690_gpio.h \
+                  --json asrock_z690_gpio.json
+   ```
+
+3. **Sanity checks**
+   - Verify all pad IDs are valid for Z690
+   - Check critical pads have reasonable configurations
+   - Compare against MSI Z690 for common platform elements (ESPI, SMBus, etc.)
+
+4. **Integration**
+   - Copy generated [gpio.h](file:///run/media/julian/ML2/Python/coreboot/coreboot/src/mainboard/msi/ms7d25/gpio.h) to [src/mainboard/asrock/z690_steel_legend/gpio.h](file:///run/media/julian/ML2/Python/coreboot/coreboot/src/mainboard/asrock/z690_steel_legend/gpio.h)
+   - Build coreboot with new GPIO configuration
+   - (Future) Test on actual hardware
+
+### Automated Tests
+
+Create unit tests for:
+- UEFI module extraction
+- GPIO table pattern detection
+- Pad configuration struct parsing
+- Macro generation
+- Comparison logic
+
+## Technical Notes
+
+### GPIO Pad Configuration Structure
+
+For Alder Lake, GPIO pad configuration is typically stored as:
+- **DW0 (DWORD 0)**: Pad mode, reset config, RX/TX state, output value
+- **DW1 (DWORD 1)**: Interrupt config, termination, pad ownership
+- **DW2/DW3**: Additional platform-specific settings
+
+The exact layout matches the hardware PADCFG registers documented in Intel's PCH datasheets.
+
+### Detection Strategy
+
+GPIO tables are identified by:
+1. **Structural patterns**: Arrays of fixed-size entries (typically 12-16 bytes)
+2. **Value validation**: Pad IDs within known ranges for the platform
+3. **Context clues**: Located in modules with GPIO-related names or near MMIO write loops
+
+### Fallback Strategies
+
+If automated detection fails:
+- Manual inspection using Ghidra/IDA to locate GPIO init code
+- Search for known GPIO MMIO base addresses (P2SB + community offsets)
+- Analyze ACPI tables for GpioIo/GpioInt resources as hints

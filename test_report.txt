@@ -1,0 +1,36 @@
+GPIO Configuration Summary
+============================================================
+Platform: alderlake
+Total Pads: 20
+
+Pad Modes:
+  GPIO: 19
+  NF6: 1
+
+GPIO Directions:
+  INPUT: 19
+
+Detailed Pad List:
+------------------------------------------------------------
+
+GPP_I:
+  GPP_I0               GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I1               GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I10              GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I11              GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I12              GPIO     INPUT    reset=PWROK    term=DN_5K
+  GPP_I13              GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I14              GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I15              GPIO     INPUT    reset=PWROK    term=DN_5K
+  GPP_I16              GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I17              GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I18              GPIO     INPUT    reset=PWROK    term=DN_5K
+  GPP_I19              GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I2               GPIO     INPUT    reset=PWROK    term=DN_5K
+  GPP_I3               GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I4               NF6      N/A      reset=PWROK    term=NONE
+  GPP_I5               GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I6               GPIO     INPUT    reset=PWROK    term=DN_5K
+  GPP_I7               GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I8               GPIO     INPUT    reset=PWROK    term=NONE
+  GPP_I9               GPIO     INPUT    reset=PWROK    term=DN_5K

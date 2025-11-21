@@ -1,0 +1,2 @@
+        Type         |        Subtype        |   Base   |   Size   |  CRC32   |   Name 
+ Image               | UEFI                  | 00000000 | 000005A0 | 43FEC62F |  UEFI image

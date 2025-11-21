@@ -1,0 +1,39 @@
+# GPIO Extraction Tool Development
+
+## Phase 1: Planning & Research
+- [ ] Analyze existing coreboot GPIO configurations for Z690
+- [ ] Research UEFI module structure for GPIO tables
+- [ ] Define Z690 GPIO pad configuration struct layout
+- [ ] Create verification methodology using MSI Z690 as reference
+
+## Phase 2: Core Tool Development
+- [x] Build UEFI firmware extraction pipeline
+  - [x] IFD region splitting
+  - [x] UEFI module extraction
+  - [x] Module classification and filtering
+- [x] Implement GPIO table detection
+  - [x] Name-based module filtering
+  - [x] Binary pattern scanning for pad structures
+  - [x] Signature-based table identification
+- [x] Create Z690 GPIO struct parser
+  - [x] Define pad configuration data structures
+  - [x] Implement bitfield decoding (DW0/DW1 registers)
+  - [x] Map to logical GPIO properties
+
+## Phase 3: Output Generation
+- [x] Build coreboot macro generator
+  - [x] Generate GPIO_PAD_CFG_* macros
+  - [x] Format output matching coreboot style
+- [x] Create JSON intermediate format
+- [/] Implement comparison/verification tools
+
+## Phase 4: Verification
+- [ ] Extract GPIO from MSI Z690 vendor BIOS
+- [ ] Compare against coreboot's MSI Z690 gpio.h
+- [ ] Calculate match percentage and analyze differences
+- [ ] Document findings and refine extraction
+
+## Phase 5: ASRock Application
+- [ ] Apply tool to ASRock Z690 Steel Legend BIOS
+- [ ] Generate gpio.h for ASRock board
+- [ ] Perform sanity checks on extracted configuration

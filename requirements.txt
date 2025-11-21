@@ -1,0 +1,2 @@
+# Python dependencies for bios2gpio
+# Currently minimal - may expand as tool evolves
