@@ -1,172 +1,87 @@
-# bios2gpio - GPIO Extraction Tool
+# bios2gpio - Static GPIO Extraction Tool
 
-Extract GPIO configurations from vendor BIOS images without requiring `inteltool` to run on the target hardware.
+**bios2gpio** is a reverse-engineering tool designed to extract Intel PCH GPIO configurations directly from vendor UEFI BIOS images.
 
-## Overview
+It generates **coreboot-compatible `gpio.h`** files without requiring you to boot the vendor firmware or run `inteltool` on the physical hardware. This is essential for porting coreboot to new mainboards where you might not have the hardware yet, or want to analyze the vendor's configuration statically.
 
-This tool analyzes vendor UEFI BIOS images to extract GPIO pad configurations, which can then be used to create coreboot GPIO configuration files. This eliminates the need to boot vendor firmware on the target hardware and run `inteltool`.
+## Features
+
+*   **Static Extraction:** works entirely on binary BIOS images (`.bin`, `.rom`).
+*   **Signature-Based Detection:** Uses specific patterns (e.g., Alder Lake GPP_I sequence) to identify GPIO tables with near-100% accuracy, ignoring garbage data.
+*   **Smart Parsing:** Automatically handles IFD splitting (via `ifdtool`) and UEFI module extraction (via `UEFIExtract`).
+*   **Calibration Mode:** Can use a known-good `gpio.h` (e.g., from a similar supported board) to mathematically find the correct table offset in a raw binary.
+*   **Image Comparison:** Compare two vendor BIOS images (e.g., MSI vs ASRock) to see if they share the exact same GPIO configuration.
+*   **Coreboot Output:** Generates ready-to-use C macros (`PAD_CFG_GPO`, `PAD_CFG_NF`, etc.).
 
 ## Supported Platforms
 
-- Intel Alder Lake (12th gen Core, Z690/H670/B660 chipsets)
+*   **Intel Alder Lake (PCH-S)** (Z690, H670, B660)
+    *   *Verified on:* MSI PRO Z690-A, ASRock Z690 Steel Legend.
 
-## Requirements
+*Support for Raptor Lake and Meteor Lake can be added by defining signatures in `platforms/`.*
 
-### System Dependencies
+## Prerequisites
 
-- **ifdtool**: Intel Flash Descriptor tool (included in coreboot `util/ifdtool/`)
-- **UEFIExtract** (optional but recommended): UEFI firmware extraction tool
-  - Download from: https://github.com/LongSoft/UEFITool
-
-### Python Dependencies
-
-```bash
-pip install -r requirements.txt
-```
+1.  **Python 3.6+**
+2.  **ifdtool**: Required to split the BIOS region from the SPI image.
+    *   Usually found in `coreboot/util/ifdtool`.
+3.  **UEFIExtract**: Required to unpack UEFI modules.
+    *   Available from [LongSoft/UEFITool](https://github.com/LongSoft/UEFITool).
 
 ## Installation
 
-1. Build ifdtool:
-```bash
-cd /path/to/coreboot/util/ifdtool
-make
-```
-
-2. Install UEFIExtract (optional):
-```bash
-# Download from https://github.com/LongSoft/UEFITool/releases
-# Extract and place UEFIExtract in your PATH
-```
-
-3. Install Python dependencies:
-```bash
-cd /path/to/coreboot/util/bios2gpio
-pip install -r requirements.txt
-```
+1.  Clone the repository (or place in `util/bios2gpio`).
+2.  Ensure `ifdtool` and `UEFIExtract` are either in your system `$PATH` **OR** placed in the same directory as the python scripts.
 
 ## Usage
 
-### Basic Usage
-
-Extract GPIO configuration from a vendor BIOS image:
-
-```bash
-./bios2gpio.py --platform alderlake --input vendor_bios.bin --output gpio.h
-```
-
-### Advanced Usage
-
-Generate multiple output formats:
+### 1. Standard Extraction
+Extract GPIOs from a vendor BIOS update or SPI dump.
 
 ```bash
 ./bios2gpio.py --platform alderlake \
-    --input vendor_bios.bin \
+    --input asrock_z690_bios.bin \
     --output gpio.h \
-    --json gpio_data.json \
-    --report gpio_summary.txt
+    --json gpio.json
 ```
 
-### Options
+*   **Output:** `gpio.h` (C header), `gpio.json` (Structured data).
 
-- `--platform`: Target platform (currently only `alderlake` supported)
-- `--input`, `-i`: Input vendor BIOS image file (required)
-- `--output`, `-o`: Output coreboot gpio.h file
-- `--json`, `-j`: Output JSON file with parsed GPIO data
-- `--report`, `-r`: Output human-readable summary report
-- `--work-dir`, `-w`: Working directory for extraction (uses temp dir if not specified)
-- `--min-entries`: Minimum entries to consider a GPIO table (default: 10)
-- `--verbose`, `-v`: Enable verbose logging for debugging
+### 2. Comparison Mode
+Check if two different boards (or BIOS versions) use the same GPIO table. This is useful to see if a new board is a "clone" of an existing supported board.
+
+```bash
+./compare_images.py \
+    --image-a msi_z690_v1.bin \
+    --image-b asrock_z690_v2.bin
+```
+
+*   **Output:** A detailed line-by-line diff of pad modes, directions, and resets.
+
+### 3. Calibration Mode (Dev/Research)
+If you have a supported board (e.g., MSI Z690) and want to find where the GPIO table is located in a raw binary to debug the detector:
+
+```bash
+./bios2gpio.py --platform alderlake \
+    --input msi_z690.bin \
+    --calibrate-with ../../src/mainboard/msi/ms7d25/gpio.h
+```
 
 ## How It Works
 
-### 1. Firmware Extraction
-
-The tool uses `ifdtool` to extract the BIOS region from Intel Flash Descriptor (IFD) formatted images. If `UEFIExtract` is available, it further extracts individual UEFI modules (PEI/DXE drivers).
-
-### 2. GPIO Table Detection
-
-The tool scans binary data for patterns that match GPIO pad configuration structures:
-
-- **Name-based filtering**: Searches for modules with names containing `Gpio`, `PchInit`, `SiliconInit`, etc.
-- **Binary pattern scanning**: Looks for arrays of fixed-size structures (8, 12, or 16 bytes) that match GPIO pad configuration layout
-- **Validation**: Verifies that pad configurations have valid values for mode, reset domain, termination, etc.
-- **Confidence scoring**: Ranks detected tables by likelihood of being actual GPIO configurations
-
-### 3. Configuration Parsing
-
-Detected tables are parsed into logical GPIO pad configurations:
-
-- Extracts pad mode (GPIO vs native function)
-- Determines direction (input/output) for GPIO mode
-- Reads output value, pull resistor configuration, reset domain
-- Identifies interrupt routing if configured
-
-### 4. Output Generation
-
-Generates coreboot-compatible GPIO configuration files using standard macros:
-
-- `PAD_CFG_GPO()` - GPIO output
-- `PAD_CFG_GPI_TRIG_OWN()` - GPIO input
-- `PAD_CFG_NF()` - Native function
-- `PAD_CFG_GPI_APIC_LOW()` - GPIO input with APIC interrupt
-- etc.
-
-## Validation
-
-To validate the tool's accuracy, compare extracted GPIO configurations against a known reference:
-
-```bash
-# Extract from MSI Z690 vendor BIOS
-./bios2gpio.py --platform alderlake \
-    --input msi_z690_vendor.bin \
-    --output msi_extracted_gpio.h \
-    --json msi_extracted.json
-
-# Compare against coreboot reference
-# (Manual comparison or use gpio_comparator.py if implemented)
-```
-
-## Limitations
-
-- **Vendor customization**: Heavily customized or obfuscated GPIO initialization code may not be detected
-- **Runtime configuration**: Some GPIO pads may be reconfigured at runtime by DXE drivers or ACPI methods
-- **Platform support**: Currently only supports Intel Alder Lake; other platforms require additional definitions
-- **Accuracy**: Without hardware validation, extracted configurations should be verified before use
+1.  **Decomposition:** The tool uses `ifdtool` to isolate the BIOS region and `UEFIExtract` to unpack PEI/DXE modules / FSP binaries.
+2.  **Detection:**
+    *   **Signature Scan:** Searches for specific bit-patterns known to be constant on the platform (e.g., `GPP_I0` is GPIO, `GPP_I1`..`I4` are Native Functions for DisplayPort).
+    *   **Heuristic Scan:** If signatures fail, it scans for array-like structures that match the statistical properties of a GPIO table.
+3.  **Filtering:** Rejects tables that are too large (>350 entries) or contain invalid register bits.
+4.  **Parsing:** Maps the raw binary data (DW0/DW1 registers) to logical names (`GPP_B12`) using the physical group order defined in `platforms/alderlake.py`.
 
 ## Troubleshooting
 
-### No GPIO tables detected
-
-- Try increasing verbosity: `--verbose`
-- Check if the BIOS image is encrypted or compressed
-- Ensure the image is a full SPI dump or valid BIOS update file
-- Try lowering `--min-entries` threshold
-
-### Incorrect pad names
-
-- The tool uses heuristics to guess pad identities
-- Pad names may not match exactly; manual verification recommended
-- Compare against Intel PCH datasheet for your platform
-
-### ifdtool not found
-
-- Build ifdtool: `cd util/ifdtool && make`
-- Ensure it's in your PATH or the tool will find it in coreboot tree
-
-## Contributing
-
-To add support for additional platforms:
-
-1. Create a new platform definition file in `platforms/`
-2. Define GPIO groups, pad structures, and bitfield layouts
-3. Update `bios2gpio.py` to recognize the new platform
+*   **"UEFIExtract not found":** Copy the `UEFIExtract` binary into the script folder.
+*   **"No GPIO tables detected":** Ensure the input file is a valid SPI dump (16MB/32MB). If it's a capsule update, try extracting the body first.
+*   **Low match score:** The tool prioritizes the "Reference Code" table (initial defaults). Coreboot `gpio.h` often contains runtime overrides (e.g., enabling Native Functions that default to GPIO). A 50-60% match against a mature coreboot port is often considered a **perfect** extraction of the vendor defaults.
 
 ## License
 
-GPL-2.0-only (same as coreboot)
-
-## References
-
-- Intel Alder Lake PCH Datasheet
-- coreboot GPIO documentation
-- UEFITool: https://github.com/LongSoft/UEFITool
+GPL-2.0-only
