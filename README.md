@@ -81,7 +81,3 @@ If you have a supported board (e.g., MSI Z690) and want to find where the GPIO t
 *   **"UEFIExtract not found":** Copy the `UEFIExtract` binary into the script folder.
 *   **"No GPIO tables detected":** Ensure the input file is a valid SPI dump (16MB/32MB). If it's a capsule update, try extracting the body first.
 *   **Low match score:** The tool prioritizes the "Reference Code" table (initial defaults). Coreboot `gpio.h` often contains runtime overrides (e.g., enabling Native Functions that default to GPIO). A 50-60% match against a mature coreboot port is often considered a **perfect** extraction of the vendor defaults.
-
-## License
-
-GPL-2.0-only
