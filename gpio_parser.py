@@ -42,17 +42,36 @@ class GPIOParser:
         Parse a detected GPIO table into structured pad configurations.
         """
         parsed_pads = []
+        is_vgpio = table.get('is_vgpio', False)
+        entry_count = table['entry_count']
+        
+        # Determine VGPIO group based on size
+        vgpio_group = None
+        if is_vgpio:
+            if 10 <= entry_count <= 14:
+                vgpio_group = 'VGPIO_0'  # VGPIO_USB
+            elif 35 <= entry_count <= 42:
+                vgpio_group = 'VGPIO'
+            elif 75 <= entry_count <= 85:
+                vgpio_group = 'VGPIO_PCIE'
+            logger.info(f"Detected VGPIO table: {vgpio_group} ({entry_count} entries)")
 
         for idx, entry in enumerate(table['entries']):
             config = entry['config']
 
-            # Use global resolution based on physical table order
-            group_name, local_idx = resolve_global_pad_name(idx)
-
-            if group_name:
+            # Handle VGPIO tables
+            if is_vgpio and vgpio_group:
+                group_name = vgpio_group
+                local_idx = idx
                 pad_name = get_pad_name(group_name, local_idx)
             else:
-                pad_name = f'UNKNOWN_{idx}'
+                # Use global resolution based on physical table order
+                group_name, local_idx = resolve_global_pad_name(idx)
+                
+                if group_name:
+                    pad_name = get_pad_name(group_name, local_idx)
+                else:
+                    pad_name = f'UNKNOWN_{idx}'
 
             # Skip unknown pads (padding at end of table)
             if 'UNKNOWN' in pad_name:
@@ -64,6 +83,7 @@ class GPIOParser:
                 'group': group_name,
                 'local_index': local_idx,
                 'offset': entry['offset'],
+                'is_vgpio': is_vgpio,
                 **config.to_dict()
             }
 
@@ -97,6 +117,7 @@ class GPIOParser:
                 'entry_count': table['entry_count'],
                 'confidence': table['confidence'],
                 'file': table.get('file', 'unknown'),
+                'is_vgpio': table.get('is_vgpio', False),
                 'pads': parsed_pads,
             }
 
@@ -112,17 +133,44 @@ class GPIOParser:
 
     def merge_tables(self, parsed_data: Dict) -> List[Dict]:
         """
-        Merge multiple tables. For this single-table-winner logic, just return the winner.
+        Merge multiple tables (standard + VGPIOs).
+        
+        Returns all pads from all tables, sorted by group and name.
         """
         if not parsed_data['tables']:
             return []
 
-        # The detector now filters to only 1 winner table.
-        # Just take its pads.
-        pads = parsed_data['tables'][0]['pads']
+        all_pads = []
+        pad_names_seen = set()
+        
+        # Collect pads from all tables
+        for table in parsed_data['tables']:
+            for pad in table['pads']:
+                # Avoid duplicates (same pad name)
+                if pad['name'] not in pad_names_seen:
+                    all_pads.append(pad)
+                    pad_names_seen.add(pad['name'])
+                else:
+                    logger.debug(f"Skipping duplicate pad: {pad['name']}")
 
-        # Sort by name for clean output
-        merged_list = sorted(pads, key=lambda p: p['name'])
+        # Sort by group order, then by name
+        # Define group priority for sorting
+        group_order = {
+            'GPP_I': 0, 'GPP_R': 1, 'GPP_J': 2,
+            'GPP_B': 3, 'GPP_G': 4, 'GPP_H': 5,
+            'GPD': 6,
+            'GPP_A': 7, 'GPP_C': 8,
+            'GPP_S': 9, 'GPP_E': 10, 'GPP_K': 11, 'GPP_F': 12,
+            'GPP_D': 13,
+            'VGPIO': 14, 'VGPIO_0': 15, 'VGPIO_PCIE': 16
+        }
+        
+        def sort_key(pad):
+            group = pad.get('group', 'UNKNOWN')
+            priority = group_order.get(group, 99)
+            return (priority, pad['name'])
+        
+        merged_list = sorted(all_pads, key=sort_key)
 
-        logger.info(f"Merged to {len(merged_list)} unique pads")
+        logger.info(f"Merged to {len(merged_list)} unique pads from {len(parsed_data['tables'])} table(s)")
         return merged_list

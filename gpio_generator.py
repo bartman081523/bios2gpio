@@ -97,6 +97,7 @@ class GPIOGenerator:
         reset = pad.get('reset', 'PLTRST')
         termination = pad.get('termination', 'NONE')
         interrupt_type = pad.get('interrupt', 'NONE')
+        is_vgpio = pad.get('is_vgpio', False)
         
         # Map termination names to coreboot constants
         term_map = {
@@ -111,6 +112,10 @@ class GPIOGenerator:
             'NATIVE': 'NATIVE',
         }
         term = term_map.get(termination, 'NONE')
+        
+        # VGPIOs use _PAD_CFG_STRUCT format
+        if is_vgpio:
+            return self._generate_vgpio_struct(pad)
         
         # Generate appropriate macro based on configuration
         if mode == 'GPIO':
@@ -142,6 +147,51 @@ class GPIOGenerator:
         else:
             # Unknown mode, use NC (not connected)
             return f"PAD_NC({pad_name}, {term})"
+    
+    def _generate_vgpio_struct(self, pad: Dict) -> str:
+        """
+        Generate _PAD_CFG_STRUCT macro for VGPIO pads.
+        
+        VGPIOs use raw DW0/DW1 format with special flags.
+        """
+        pad_name = pad['name']
+        mode = pad.get('mode', 'GPIO')
+        reset = pad.get('reset', 'DEEP')
+        direction = pad.get('direction', 'INPUT')
+        output_value = pad.get('output_value', 0)
+        dw0_raw = pad.get('dw0', '0x00000000')
+        
+        # Build DW0 flags
+        flags = []
+        
+        # Pad function
+        if mode == 'GPIO':
+            flags.append('PAD_FUNC(GPIO)')
+        elif mode in ['NF1', 'NF2', 'NF3', 'NF4', 'NF5', 'NF6', 'NF7']:
+            flags.append(f'PAD_FUNC({mode})')
+        else:
+            flags.append('PAD_FUNC(GPIO)')
+        
+        # Reset domain
+        flags.append(f'PAD_RESET({reset})')
+        
+        # Buffer configuration for GPIO mode
+        if mode == 'GPIO':
+            if direction == 'OUTPUT':
+                flags.append('PAD_BUF(RX_DISABLE)')
+                if output_value == 1:
+                    flags.append('1')  # TX state
+            else:
+                flags.append('PAD_BUF(TX_DISABLE)')
+        
+        # Check for NAFVWE bit in raw DW0 (common for VGPIOs)
+        if isinstance(dw0_raw, str) and dw0_raw.startswith('0x'):
+            dw0_val = int(dw0_raw, 16)
+            if dw0_val & (1 << 27):  # NAFVWE bit
+                flags.append('PAD_CFG0_NAFVWE_ENABLE')
+        
+        flags_str = ' | '.join(flags)
+        return f"_PAD_CFG_STRUCT({pad_name}, {flags_str}, 0)"
     
     def generate_summary_report(self, pads: List[Dict], output_path: Path):
         """

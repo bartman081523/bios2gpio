@@ -25,8 +25,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Regex for parsing coreboot GPIO macros
-# Matches: PAD_CFG_MACRO(PAD_NAME, ARG1, ARG2, ...)
-MACRO_REGEX = re.compile(r'^\s*(PAD_CFG_[A-Z0-9_]+)\s*\((.+)\)\s*,?\s*(?:/\*.*?\*/)?\s*$')
+# Matches: PAD_CFG_MACRO(PAD_NAME, ARG1, ARG2, ...) and _PAD_CFG_STRUCT
+MACRO_REGEX = re.compile(r'^\s*(_?PAD_CFG_[A-Z0-9_]+|_PAD_CFG_STRUCT)\s*\((.+)\)\s*,?\s*(?:/\*.*?\*/)?\s*$')
 
 def parse_gpio_h(file_path: Path) -> Dict[str, Dict]:
     """
@@ -66,8 +66,30 @@ def parse_gpio_h(file_path: Path) -> Dict[str, Dict]:
                 'name': pad_name
             }
 
-            # Attempt to derive logical properties
-            if 'GPO' in macro_name:
+            # Handle _PAD_CFG_STRUCT (VGPIOs)
+            if macro_name == '_PAD_CFG_STRUCT':
+                # _PAD_CFG_STRUCT(pad_name, flags, dw1)
+                # Parse flags to extract mode
+                if len(args) > 1:
+                    flags = args[1]
+                    if 'PAD_FUNC(GPIO)' in flags:
+                        config['mode'] = 'GPIO'
+                        # Determine direction from buffer config
+                        if 'PAD_BUF(RX_DISABLE)' in flags or 'RX_DISABLE' in flags:
+                            config['direction'] = 'OUTPUT'
+                        elif 'PAD_BUF(TX_DISABLE)' in flags or 'TX_DISABLE' in flags:
+                            config['direction'] = 'INPUT'
+                        else:
+                            config['direction'] = 'INPUT'  # Default
+                    elif 'PAD_FUNC(NF' in flags:
+                        # Extract NF number
+                        nf_match = re.search(r'PAD_FUNC\((NF\d+)\)', flags)
+                        if nf_match:
+                            config['mode'] = nf_match.group(1)
+                        else:
+                            config['mode'] = 'NF'
+            # Handle standard macros
+            elif 'GPO' in macro_name:
                 config['mode'] = 'GPIO'
                 config['direction'] = 'OUTPUT'
                 if len(args) > 1:

@@ -11,8 +11,8 @@ import sys
 import re
 from pathlib import Path
 
-# Regex to parse gpio.h macros
-MACRO_REGEX = re.compile(r'^\s*PAD_CFG_([A-Z0-9_]+)\s*\(([^,]+),')
+# Regex to parse gpio.h macros (including _PAD_CFG_STRUCT)
+MACRO_REGEX = re.compile(r'^\s*(PAD_CFG_[A-Z0-9_]+|_PAD_CFG_STRUCT)\s*\(([^,]+),')
 
 # Map macro types to expected Mode (0=GPIO, 1=NF1, etc.)
 # This is a heuristic; specific macros might override, but this captures 95% of cases.
@@ -40,8 +40,20 @@ def parse_gpio_h(filepath):
 
                 mode = 0 # Default GPIO
 
+                # Handle _PAD_CFG_STRUCT (VGPIOs)
+                if macro_type == '_PAD_CFG_STRUCT':
+                    # Parse the flags to extract mode
+                    if 'PAD_FUNC(GPIO)' in line:
+                        mode = 0
+                    elif 'PAD_FUNC(NF' in line:
+                        # Extract NF number
+                        nf_match = re.search(r'PAD_FUNC\(NF(\d+)\)', line)
+                        if nf_match:
+                            mode = int(nf_match.group(1))
+                        else:
+                            mode = 1
                 # Handle PAD_CFG_NF(..., NFx)
-                if macro_type == 'NF':
+                elif macro_type == 'PAD_CFG_NF':
                     # Extract the last argument for NF number
                     args = line.split('(')[1].split(')')[0].split(',')
                     if len(args) >= 4:

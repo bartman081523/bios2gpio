@@ -106,9 +106,20 @@ def main():
         detector = GPIOTableDetector(platform=args.platform)
 
         files_to_scan = []
-        if modules: files_to_scan.extend([m['path'] for m in modules])
-        if bios_region and bios_region.exists(): files_to_scan.append(bios_region)
-        if not modules: files_to_scan.extend(all_binaries)
+        
+        # Priority 1: Scan the BIOS region file (contains all GPIO tables)
+        if bios_region and bios_region.exists():
+            files_to_scan.append(bios_region)
+            logger.info(f"Scanning BIOS region: {bios_region}")
+        # Priority 2: If no BIOS region, scan GPIO-specific modules
+        elif modules:
+            files_to_scan.extend([m['path'] for m in modules])
+            logger.info(f"Scanning {len(modules)} GPIO modules")
+        # Fallback: Scan all binaries (slow)
+        else:
+            files_to_scan.extend(all_binaries[:50])  # Limit to first 50 to avoid excessive scanning
+            logger.info(f"Scanning first 50 binary files")
+        
         files_to_scan = list(set(files_to_scan))
 
         logger.info(f"Scanning {len(files_to_scan)} files...")
