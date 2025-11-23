@@ -31,7 +31,7 @@ MACRO_TO_MODE = {
 def parse_gpio_h(filepath):
     """Parses gpio.h to get a list of (PadName, ExpectedMode)."""
     pads = []
-    with open(filepath, 'r') as f:
+    with open(filepath, 'r', errors='ignore') as f:
         for line in f:
             match = MACRO_REGEX.match(line)
             if match:

@@ -60,19 +60,19 @@ def extract_pads_from_image(image_path: Path, platform: str) -> Dict[str, Any]:
             logger.error(f"  No GPIO tables found in {image_path.name}")
             return {}
 
-        # 3. Select Best Table (Winner)
+        # 3. Select Best Tables (Winner + VGPIOs)
         # We trust the detector's internal sorting (signature match + size heuristic)
-        best_tables = detector.filter_best_tables(all_tables, max_tables=1)
+        best_tables = detector.filter_best_tables(all_tables)
         if not best_tables:
             logger.error(f"  No valid tables found in {image_path.name}")
             return {}
 
-        winner = best_tables[0]
-        logger.info(f"  Found table: {winner['entry_count']} entries at offset 0x{winner['offset']:x}")
+        logger.info(f"  Found {len(best_tables)} tables.")
 
-        # 4. Parse
+        # 4. Parse and Merge
         parser = GPIOParser(platform=platform)
-        pads_list = parser.parse_table(winner)
+        parsed_data = parser.parse_multiple_tables(best_tables)
+        pads_list = parser.merge_tables(parsed_data)
 
         # Convert to dict keyed by name for comparison
         return {pad['name']: pad for pad in pads_list}

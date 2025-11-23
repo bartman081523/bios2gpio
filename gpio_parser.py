@@ -86,7 +86,6 @@ class GPIOParser:
                 'is_vgpio': is_vgpio,
                 **config.to_dict()
             }
-
             parsed_pads.append(pad_info)
 
         logger.info(f"Parsed {len(parsed_pads)} pads from table")
