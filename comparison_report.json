@@ -1,0 +1,888 @@
+{
+  "total_ref": 367,
+  "total_ext": 382,
+  "exact_matches": [
+    "GPP_I0",
+    "GPP_I1",
+    "GPP_I2",
+    "GPP_I3",
+    "GPP_I4",
+    "GPP_I5",
+    "GPP_I9",
+    "GPP_I10",
+    "GPP_I11",
+    "GPP_I15",
+    "GPP_I16",
+    "GPP_I21",
+    "GPP_I22",
+    "GPP_R3",
+    "GPP_R4",
+    "GPP_R12",
+    "GPP_R13",
+    "GPP_R15",
+    "GPP_R18",
+    "GPP_R19",
+    "GPP_R20",
+    "GPP_R21",
+    "GPP_J0",
+    "GPP_J1",
+    "GPP_J10",
+    "GPP_J11",
+    "VGPIO_4",
+    "VGPIO_6",
+    "VGPIO_10",
+    "VGPIO_12",
+    "VGPIO_13",
+    "VGPIO_18",
+    "VGPIO_19",
+    "VGPIO_22",
+    "VGPIO_24",
+    "VGPIO_25",
+    "VGPIO_30",
+    "VGPIO_32",
+    "VGPIO_33",
+    "VGPIO_34",
+    "VGPIO_35",
+    "VGPIO_USB_0",
+    "VGPIO_USB_2",
+    "VGPIO_USB_8",
+    "VGPIO_USB_10",
+    "GPP_B0",
+    "GPP_B1",
+    "GPP_B2",
+    "GPP_B4",
+    "GPP_B5",
+    "GPP_B6",
+    "GPP_B8",
+    "GPP_B9",
+    "GPP_B17",
+    "GPP_B19",
+    "GPP_B21",
+    "GPP_B22",
+    "GPP_B23",
+    "GPP_G3",
+    "GPP_G6",
+    "GPP_H0",
+    "GPP_H1",
+    "GPP_H10",
+    "GPP_H11",
+    "GPP_H13",
+    "GPP_H14",
+    "GPP_H15",
+    "GPP_H16",
+    "GPP_H17",
+    "GPP_H18",
+    "GPP_H19",
+    "GPP_H20",
+    "GPD0",
+    "GPD1",
+    "GPD7",
+    "GPD11",
+    "GPD12",
+    "GPP_A6",
+    "GPP_A7",
+    "GPP_A8",
+    "GPP_A9",
+    "GPP_A10",
+    "GPP_A11",
+    "GPP_A12",
+    "GPP_A13",
+    "GPP_C5",
+    "GPP_C9",
+    "GPP_C10",
+    "GPP_C12",
+    "GPP_C13",
+    "GPP_C14",
+    "GPP_C15",
+    "GPP_C18",
+    "GPP_C19",
+    "GPP_C22",
+    "GPP_C23",
+    "VGPIO_PCIE_0",
+    "VGPIO_PCIE_12",
+    "VGPIO_PCIE_13",
+    "VGPIO_PCIE_14",
+    "VGPIO_PCIE_15",
+    "VGPIO_PCIE_64",
+    "VGPIO_PCIE_66",
+    "VGPIO_PCIE_67",
+    "VGPIO_PCIE_16",
+    "VGPIO_PCIE_17",
+    "VGPIO_PCIE_18",
+    "VGPIO_PCIE_19",
+    "VGPIO_PCIE_20",
+    "VGPIO_PCIE_21",
+    "VGPIO_PCIE_22",
+    "VGPIO_PCIE_23",
+    "VGPIO_PCIE_24",
+    "VGPIO_PCIE_25",
+    "VGPIO_PCIE_26",
+    "VGPIO_PCIE_27",
+    "VGPIO_PCIE_28",
+    "VGPIO_PCIE_29",
+    "VGPIO_PCIE_30",
+    "VGPIO_PCIE_31",
+    "VGPIO_PCIE_68",
+    "VGPIO_PCIE_69",
+    "VGPIO_PCIE_71",
+    "VGPIO_PCIE_32",
+    "VGPIO_PCIE_33",
+    "VGPIO_PCIE_34",
+    "VGPIO_PCIE_36",
+    "VGPIO_PCIE_38",
+    "VGPIO_PCIE_39",
+    "VGPIO_PCIE_40",
+    "VGPIO_PCIE_41",
+    "VGPIO_PCIE_42",
+    "VGPIO_PCIE_43",
+    "VGPIO_PCIE_44",
+    "VGPIO_PCIE_45",
+    "VGPIO_PCIE_46",
+    "VGPIO_PCIE_47",
+    "VGPIO_PCIE_72",
+    "VGPIO_PCIE_73",
+    "VGPIO_PCIE_74",
+    "VGPIO_PCIE_75",
+    "VGPIO_PCIE_48",
+    "VGPIO_PCIE_49",
+    "VGPIO_PCIE_50",
+    "VGPIO_PCIE_51",
+    "VGPIO_PCIE_52",
+    "VGPIO_PCIE_53",
+    "VGPIO_PCIE_55",
+    "VGPIO_PCIE_56",
+    "VGPIO_PCIE_57",
+    "VGPIO_PCIE_58",
+    "VGPIO_PCIE_59",
+    "VGPIO_PCIE_60",
+    "VGPIO_PCIE_61",
+    "VGPIO_PCIE_62",
+    "VGPIO_PCIE_63",
+    "VGPIO_PCIE_76",
+    "VGPIO_PCIE_77",
+    "VGPIO_PCIE_78",
+    "GPP_S0",
+    "GPP_S1",
+    "GPP_S2",
+    "GPP_S3",
+    "GPP_S4",
+    "GPP_S5",
+    "GPP_S6",
+    "GPP_S7",
+    "GPP_E2",
+    "GPP_E3",
+    "GPP_E4",
+    "GPP_E5",
+    "GPP_K2",
+    "GPP_K3",
+    "GPP_K4",
+    "GPP_F4",
+    "GPP_F5",
+    "GPP_F6",
+    "GPP_F7",
+    "GPP_F10",
+    "GPP_F12",
+    "GPP_F15",
+    "GPP_F16",
+    "GPP_F17",
+    "GPP_F22",
+    "GPP_F23",
+    "GPP_D1",
+    "GPP_D2",
+    "GPP_D3",
+    "GPP_D7",
+    "GPP_D8",
+    "GPP_D11",
+    "GPP_D13",
+    "GPP_D14",
+    "GPP_D16",
+    "GPP_D17",
+    "GPP_D18",
+    "GPP_D19",
+    "GPP_D20",
+    "GPP_D21",
+    "GPP_D22",
+    "GPP_D23"
+  ],
+  "partial_matches": [
+    {
+      "pad": "GPP_J6",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_J7",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "VGPIO_0",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "VGPIO_5",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "VGPIO_7",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "VGPIO_9",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "VGPIO_20",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "VGPIO_21",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_B10",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_B16",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_B20",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_G0",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_G1",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_G4",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_H12",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_H21",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_H22",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_H23",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_A14",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_C3",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_C4",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_C6",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_C8",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_C20",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "GPP_C21",
+      "issue": "Direction mismatch: Ref=OUTPUT, Ext=INPUT"
+    },
+    {
+      "pad": "VGPIO_PCIE_65",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "VGPIO_PCIE_70",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "VGPIO_PCIE_37",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E6",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E7",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E13",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E14",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E15",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E16",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E17",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E18",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E19",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E20",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_E21",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_K0",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_K1",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_K5",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_K11",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F0",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F1",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F2",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F3",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F11",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F13",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F18",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F19",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F20",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    },
+    {
+      "pad": "GPP_F21",
+      "issue": "Direction mismatch: Ref=INPUT, Ext=OUTPUT"
+    }
+  ],
+  "mismatches": [
+    {
+      "pad": "GPP_I6",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_I7",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_I8",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_I12",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_I13",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_I14",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_I17",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF2"
+    },
+    {
+      "pad": "GPP_I18",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF2"
+    },
+    {
+      "pad": "GPP_I19",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF2"
+    },
+    {
+      "pad": "GPP_I20",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF2"
+    },
+    {
+      "pad": "GPP_R0",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_R1",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_R2",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_R5",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R6",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R7",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R8",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R9",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R10",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R11",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R14",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "GPP_R16",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_R17",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_J2",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_J3",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_J4",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_J5",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_J9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "VGPIO_8",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF5"
+    },
+    {
+      "pad": "VGPIO_11",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "VGPIO_23",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "VGPIO_31",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF3"
+    },
+    {
+      "pad": "VGPIO_USB_1",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "VGPIO_USB_3",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "VGPIO_USB_9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "VGPIO_USB_11",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_B3",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "GPP_B7",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "GPP_B11",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "GPP_B12",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_B13",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_B14",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_B15",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "GPP_B18",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_G2",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_G5",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_H2",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_H3",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_H4",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_H6",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_H7",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_H8",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_H9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD2",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD3",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD4",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD5",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD6",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD8",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPD10",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_A0",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_A1",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_A2",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_A3",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_A4",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_A5",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_C0",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_C1",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_C2",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_C7",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "GPP_C11",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "GPP_C16",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_C17",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "VGPIO_PCIE_1",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_2",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_3",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_4",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_5",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_6",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_7",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_8",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_9",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_10",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_11",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "VGPIO_PCIE_35",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF6"
+    },
+    {
+      "pad": "VGPIO_PCIE_54",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF1"
+    },
+    {
+      "pad": "GPP_E0",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_E1",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_E8",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_E9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_E10",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_E11",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_E12",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_K6",
+      "issue": "Mode mismatch: Ref=NF2, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_K7",
+      "issue": "Mode mismatch: Ref=NF2, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_K8",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_K9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_K10",
+      "issue": "Mode mismatch: Ref=NF2, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_F8",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_F9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_F14",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_D0",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_D4",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_D5",
+      "issue": "Mode mismatch: Ref=NF2, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_D6",
+      "issue": "Mode mismatch: Ref=NF3, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_D9",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_D10",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    },
+    {
+      "pad": "GPP_D12",
+      "issue": "Mode mismatch: Ref=GPIO, Ext=NF7"
+    },
+    {
+      "pad": "GPP_D15",
+      "issue": "Mode mismatch: Ref=NF1, Ext=GPIO"
+    }
+  ],
+  "missing_in_extracted": [
+    "VGPIO_36",
+    "VGPIO_37",
+    "VGPIO_PCIE_79"
+  ],
+  "extra_in_extracted": [
+    "GPP_J8",
+    "GPP_G7",
+    "GPP_H5",
+    "VGPIO_1",
+    "VGPIO_14",
+    "VGPIO_15",
+    "VGPIO_16",
+    "VGPIO_17",
+    "VGPIO_2",
+    "VGPIO_26",
+    "VGPIO_27",
+    "VGPIO_28",
+    "VGPIO_29",
+    "VGPIO_3",
+    "VGPIO_USB_4",
+    "VGPIO_USB_5",
+    "VGPIO_USB_6",
+    "VGPIO_USB_7"
+  ]
+}

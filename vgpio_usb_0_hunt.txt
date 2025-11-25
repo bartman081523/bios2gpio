@@ -1,0 +1,10 @@
+Detecting GPIO tables...
+Traceback (most recent call last):
+  File "/run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/hunt_vgpio_usb_0.py", line 70, in <module>
+    main()
+    ~~~~^^
+  File "/run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/hunt_vgpio_usb_0.py", line 30, in main
+    detector = GPIOTableDetector(bios_path)
+  File "/run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/gpio_detector.py", line 39, in __init__
+    raise ValueError(f"Unsupported platform: {platform}")
+ValueError: Unsupported platform: E7D25IMS.1M0

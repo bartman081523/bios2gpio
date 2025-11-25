@@ -1,0 +1,110 @@
+INFO: bios2gpio - Extracting GPIO from E7D25IMS.1M0
+INFO: Platform: alderlake
+INFO: Step 1: Extracting UEFI modules...
+INFO: Extracting BIOS region from /run/media/julian/ML2/Python/coreboot/coreboot/util/bios2gpio/E7D25IMS.1M0
+INFO: BIOS region extracted to /tmp/bios2gpio_lyc10hue/flashregion_1_bios.bin
+INFO: UEFI modules extracted to /tmp/bios2gpio_lyc10hue/uefi_extracted/E7D25IMS.1M0.dump
+INFO: Found 128 modules matching patterns (excluding ME/Descriptor)
+INFO: Step 2: Detecting GPIO tables...
+INFO: Scanning BIOS region: /tmp/bios2gpio_lyc10hue/flashregion_1_bios.bin
+INFO: Scanning 1 files...
+INFO: SIGNATURE MATCH at offset 0x26bbc (entry size 8)
+INFO:   -> Extracted 320 entries
+INFO: SIGNATURE MATCH at offset 0x29fb4 (entry size 8)
+INFO:   -> Extracted 320 entries
+INFO: SIGNATURE MATCH at offset 0x37948 (entry size 8)
+INFO:   -> Extracted 34 entries
+INFO: SIGNATURE MATCH at offset 0x38e8c (entry size 8)
+INFO:   -> Extracted 66 entries
+INFO: SIGNATURE MATCH at offset 0xd3db4 (entry size 8)
+INFO:   -> Extracted 42 entries
+INFO: SIGNATURE MATCH at offset 0xd3db8 (entry size 8)
+INFO:   -> Extracted 37 entries
+INFO: SIGNATURE MATCH at offset 0x193814 (entry size 8)
+INFO:   -> Extracted 253 entries
+INFO: SIGNATURE MATCH at offset 0x193874 (entry size 8)
+INFO:   -> Extracted 241 entries
+INFO: SIGNATURE MATCH at offset 0x1938ec (entry size 8)
+INFO:   -> Extracted 226 entries
+INFO: SIGNATURE MATCH at offset 0x22650c (entry size 8)
+INFO:   -> Extracted 20 entries
+INFO: SIGNATURE MATCH at offset 0x226510 (entry size 8)
+INFO:   -> Extracted 20 entries
+INFO: Found 11 tables via signature matching (stride 8)
+INFO: SIGNATURE MATCH at offset 0x2e130 (entry size 12)
+INFO:   -> Extracted 320 entries
+INFO: SIGNATURE MATCH at offset 0x37940 (entry size 12)
+INFO:   -> Extracted 23 entries
+INFO: SIGNATURE MATCH at offset 0x37948 (entry size 12)
+INFO:   -> Extracted 25 entries
+INFO: SIGNATURE MATCH at offset 0xd3db0 (entry size 12)
+INFO:   -> Extracted 75 entries
+INFO: SIGNATURE MATCH at offset 0xd3db4 (entry size 12)
+INFO:   -> Extracted 21 entries
+INFO: SIGNATURE MATCH at offset 0xd3db8 (entry size 12)
+INFO:   -> Extracted 79 entries
+INFO: SIGNATURE MATCH at offset 0xd456c (entry size 12)
+INFO:   -> Extracted 56 entries
+INFO: SIGNATURE MATCH at offset 0x195b6c (entry size 12)
+INFO:   -> Extracted 320 entries
+INFO: SIGNATURE MATCH at offset 0x195bac (entry size 12)
+INFO:   -> Extracted 320 entries
+INFO: SIGNATURE MATCH at offset 0x195bec (entry size 12)
+INFO:   -> Extracted 320 entries
+INFO: SIGNATURE MATCH at offset 0x196060 (entry size 12)
+INFO:   -> Extracted 264 entries
+INFO: SIGNATURE MATCH at offset 0x196308 (entry size 12)
+INFO:   -> Extracted 207 entries
+INFO: SIGNATURE MATCH at offset 0x196720 (entry size 12)
+INFO:   -> Extracted 120 entries
+INFO: SIGNATURE MATCH at offset 0x226060 (entry size 12)
+INFO:   -> Extracted 49 entries
+INFO: SIGNATURE MATCH at offset 0x226508 (entry size 12)
+INFO:   -> Extracted 13 entries
+INFO: SIGNATURE MATCH at offset 0x22650c (entry size 12)
+INFO:   -> Extracted 13 entries
+INFO: SIGNATURE MATCH at offset 0x226510 (entry size 12)
+INFO:   -> Extracted 14 entries
+INFO: Found 14 tables via signature matching (stride 12)
+INFO: SIGNATURE MATCH at offset 0x3793c (entry size 16)
+INFO:   -> Extracted 15 entries
+INFO: SIGNATURE MATCH at offset 0x37940 (entry size 16)
+INFO:   -> Extracted 31 entries
+INFO: SIGNATURE MATCH at offset 0x37948 (entry size 16)
+INFO:   -> Extracted 15 entries
+INFO: SIGNATURE MATCH at offset 0x38e84 (entry size 16)
+INFO:   -> Extracted 105 entries
+INFO: SIGNATURE MATCH at offset 0x38e8c (entry size 16)
+INFO:   -> Extracted 105 entries
+INFO: SIGNATURE MATCH at offset 0xd3dac (entry size 16)
+INFO:   -> Extracted 57 entries
+INFO: SIGNATURE MATCH at offset 0xd3db0 (entry size 16)
+INFO:   -> Extracted 60 entries
+INFO: SIGNATURE MATCH at offset 0xd3db4 (entry size 16)
+INFO:   -> Extracted 67 entries
+INFO: SIGNATURE MATCH at offset 0xd3db8 (entry size 16)
+INFO:   -> Extracted 64 entries
+INFO: SIGNATURE MATCH at offset 0x195e1c (entry size 16)
+INFO:   -> Extracted 234 entries
+INFO: SIGNATURE MATCH at offset 0x19622c (entry size 16)
+INFO:   -> Extracted 169 entries
+INFO: SIGNATURE MATCH at offset 0x226504 (entry size 16)
+INFO:   -> Extracted 55 entries
+INFO: SIGNATURE MATCH at offset 0x226508 (entry size 16)
+INFO:   -> Extracted 9 entries
+INFO: SIGNATURE MATCH at offset 0x22650c (entry size 16)
+INFO:   -> Extracted 59 entries
+INFO: SIGNATURE MATCH at offset 0x226510 (entry size 16)
+INFO:   -> Extracted 52 entries
+INFO: Found 12 tables via signature matching (stride 16)
+INFO: Signature matching found 12 large table(s) (>200 entries), skipping pattern scan
+INFO: Total signature-matched tables: 37
+INFO: Detected 37 potential tables
+ERROR: Failed to parse calibration header: [Errno 2] No such file or directory: '../../../src/mainboard/msi/ms7d25/gpio.h'
+INFO: Winner: Table with 253 entries (Offset 193814)
+INFO: Step 3: Parsing GPIO configurations...
+INFO: Parsed 253 pads from table
+INFO: Merged to 253 unique pads from 1 table(s)
+INFO: Merged to 253 unique pads
+INFO: Exported GPIO data to test_coverage.json
+INFO: Generated coreboot gpio.h at test_gpio.h

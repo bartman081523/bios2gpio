@@ -1,1 +1,12 @@
 __pycache__ 
+ghidra/bom.json
+ghidra/docs
+ghidra/Extensions
+ghidra/Ghidra
+ghidra/ghidraRun
+ghidra/ghidraRun.bat
+ghidra/GPL
+ghidra/LICENSE
+ghidra/licenses
+ghidra/server
+ghidra/support

@@ -149,19 +149,17 @@ class UEFIExtractor:
 
     def extract_uefi_modules(self) -> Path:
         """
-        Extract UEFI modules from BIOS region using UEFIExtract.
-
+        Extract UEFI modules from BIOS image using UEFIExtract.
+        
         Returns:
             Path to directory containing extracted modules
         """
-        if not self.bios_region_path:
-            self.extract_bios_region()
-
-        logger.info(f"Extracting UEFI modules from {self.bios_region_path}")
-
         uefi_extract = self._find_tool('UEFIExtract')
         if not uefi_extract:
             logger.warning("UEFIExtract not available, will work with raw BIOS region")
+            if not self.bios_region_path:
+                self.extract_bios_region()
+            
             self.extracted_modules_dir = self.work_dir / 'raw'
             self.extracted_modules_dir.mkdir(exist_ok=True)
             # Copy BIOS region to work dir for analysis
@@ -173,12 +171,42 @@ class UEFIExtractor:
         self.extracted_modules_dir = self.work_dir / 'uefi_extracted'
         self.extracted_modules_dir.mkdir(exist_ok=True)
 
-        # Copy BIOS region to the extraction dir to ensure UEFIExtract output stays local
-        # UEFIExtract puts .dump directory relative to input file
+        # Try extracting from the full BIOS image first (more reliable for UEFIExtract)
+        # Copy to work dir to keep things clean
+        local_image = self.extracted_modules_dir / self.bios_image.name
+        shutil.copy(self.bios_image, local_image)
+        
+        cmd = [uefi_extract, str(local_image), 'all']
+        
+        try:
+            # UEFIExtract might return non-zero on partial errors (e.g. code 8)
+            # We allow this if it produces output
+            subprocess.run(
+                cmd,
+                cwd=str(self.extracted_modules_dir),
+                capture_output=True,
+                text=True,
+                check=False 
+            )
+            
+            dump_dir = self.extracted_modules_dir / f"{local_image.name}.dump"
+            
+            if dump_dir.exists() and any(dump_dir.iterdir()):
+                self.extracted_modules_dir = dump_dir
+                logger.info(f"UEFI modules extracted to {self.extracted_modules_dir}")
+                return self.extracted_modules_dir
+                
+        except Exception as e:
+            logger.warning(f"Extraction from full image failed: {e}")
+
+        # Fallback: Extract from BIOS region (if full image extraction failed or produced nothing)
+        logger.info("Falling back to extraction from BIOS region...")
+        if not self.bios_region_path:
+            self.extract_bios_region()
+            
         local_bios_copy = self.extracted_modules_dir / 'bios_for_extraction.bin'
         shutil.copy(self.bios_region_path, local_bios_copy)
 
-        # Run UEFIExtract
         cmd = [uefi_extract, str(local_bios_copy), 'all']
 
         try:
@@ -187,11 +215,9 @@ class UEFIExtractor:
                 cwd=str(self.extracted_modules_dir),
                 capture_output=True,
                 text=True,
-                check=True
+                check=False
             )
 
-            # The output will be in a folder named 'bios_for_extraction.bin.dump'
-            # Update extracted_modules_dir to point there so find_modules works correctly
             dump_dir = self.extracted_modules_dir / 'bios_for_extraction.bin.dump'
             if dump_dir.exists():
                 self.extracted_modules_dir = dump_dir
