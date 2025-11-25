@@ -1,4 +1,5 @@
 __pycache__ 
+platforms/__pycache__
 ghidra/bom.json
 ghidra/docs
 ghidra/Extensions
