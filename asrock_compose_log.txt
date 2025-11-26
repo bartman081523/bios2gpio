@@ -1,0 +1,735 @@
+Composing GPIO State from Z690-Steel-Legend_21.01.ROM
+SIGNATURE MATCH at offset 0x26bbc (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x29f64 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x378e8 (entry size 8)
+  -> Extracted 34 entries
+SIGNATURE MATCH at offset 0x38db4 (entry size 8)
+  -> Extracted 66 entries
+SIGNATURE MATCH at offset 0xd3da8 (entry size 8)
+  -> Extracted 42 entries
+SIGNATURE MATCH at offset 0xd3dac (entry size 8)
+  -> Extracted 37 entries
+SIGNATURE MATCH at offset 0x193814 (entry size 8)
+  -> Extracted 253 entries
+SIGNATURE MATCH at offset 0x193874 (entry size 8)
+  -> Extracted 241 entries
+SIGNATURE MATCH at offset 0x1938ec (entry size 8)
+  -> Extracted 226 entries
+SIGNATURE MATCH at offset 0x2263d4 (entry size 8)
+  -> Extracted 20 entries
+SIGNATURE MATCH at offset 0x2263d8 (entry size 8)
+  -> Extracted 20 entries
+SIGNATURE MATCH at offset 0x2ed9c4 (entry size 8)
+  -> Extracted 271 entries
+SIGNATURE MATCH at offset 0x1001f70 (entry size 8)
+  -> Extracted 9 entries
+SIGNATURE MATCH at offset 0x10b6178 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1150f1c (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1d6772c (entry size 8)
+  -> Extracted 8 entries
+SIGNATURE MATCH at offset 0x1d67988 (entry size 8)
+  -> Extracted 44 entries
+SIGNATURE MATCH at offset 0x1d6798c (entry size 8)
+  -> Extracted 46 entries
+SIGNATURE MATCH at offset 0x1de27fc (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1df0138 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e055e4 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e0c734 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e12e94 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e1467c (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e146a8 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e146ac (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14770 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14774 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e1b4e0 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e260e4 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e3b094 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e43888 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e4f7f0 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e6ab94 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a838 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a844 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8599c (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e876d8 (entry size 8)
+  -> Extracted 314 entries
+SIGNATURE MATCH at offset 0x1e8d680 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8d6ac (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e90cc8 (entry size 8)
+  -> Extracted 16 entries
+SIGNATURE MATCH at offset 0x1e90ccc (entry size 8)
+  -> Extracted 16 entries
+SIGNATURE MATCH at offset 0x1e90cf8 (entry size 8)
+  -> Extracted 10 entries
+SIGNATURE MATCH at offset 0x1f4b1c0 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4b1c4 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4b54c (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f56ba4 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f7daec (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f828f0 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f89eb8 (entry size 8)
+  -> Extracted 199 entries
+SIGNATURE MATCH at offset 0x1f8e3e8 (entry size 8)
+  -> Extracted 147 entries
+SIGNATURE MATCH at offset 0x1f94020 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f94024 (entry size 8)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1fa6920 (entry size 8)
+  -> Extracted 201 entries
+SIGNATURE MATCH at offset 0x1faf5b8 (entry size 8)
+  -> Extracted 189 entries
+SIGNATURE MATCH at offset 0x1fd25d8 (entry size 8)
+  -> Extracted 9 entries
+SIGNATURE MATCH at offset 0x1fd771c (entry size 8)
+  -> Extracted 9 entries
+Found 50 tables via signature matching (stride 8)
+SIGNATURE MATCH at offset 0x2e0d4 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x378e0 (entry size 12)
+  -> Extracted 23 entries
+SIGNATURE MATCH at offset 0x378e8 (entry size 12)
+  -> Extracted 25 entries
+SIGNATURE MATCH at offset 0xd3da4 (entry size 12)
+  -> Extracted 75 entries
+SIGNATURE MATCH at offset 0xd3da8 (entry size 12)
+  -> Extracted 21 entries
+SIGNATURE MATCH at offset 0xd3dac (entry size 12)
+  -> Extracted 79 entries
+SIGNATURE MATCH at offset 0xd4560 (entry size 12)
+  -> Extracted 56 entries
+SIGNATURE MATCH at offset 0x195b6c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x195bac (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x195bec (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x196060 (entry size 12)
+  -> Extracted 264 entries
+SIGNATURE MATCH at offset 0x196308 (entry size 12)
+  -> Extracted 207 entries
+SIGNATURE MATCH at offset 0x196720 (entry size 12)
+  -> Extracted 120 entries
+SIGNATURE MATCH at offset 0x22609c (entry size 12)
+  -> Extracted 44 entries
+SIGNATURE MATCH at offset 0x2263d0 (entry size 12)
+  -> Extracted 13 entries
+SIGNATURE MATCH at offset 0x2263d4 (entry size 12)
+  -> Extracted 13 entries
+SIGNATURE MATCH at offset 0x2263d8 (entry size 12)
+  -> Extracted 14 entries
+SIGNATURE MATCH at offset 0x13ea5c0 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x14a9dc8 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x15d08d4 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1beaf80 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1c3d3ac (entry size 12)
+  -> Extracted 6 entries
+SIGNATURE MATCH at offset 0x1d67984 (entry size 12)
+  -> Extracted 16 entries
+SIGNATURE MATCH at offset 0x1d67988 (entry size 12)
+  -> Extracted 30 entries
+SIGNATURE MATCH at offset 0x1d6798c (entry size 12)
+  -> Extracted 31 entries
+SIGNATURE MATCH at offset 0x1de8540 (entry size 12)
+  -> Extracted 8 entries
+SIGNATURE MATCH at offset 0x1e0d5c4 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e1465c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e146a8 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e146ac (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e1476c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14770 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14774 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e3257c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e39930 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e4fcac (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e5af40 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a81c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a83c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a844 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7b298 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8d614 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8d670 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8d68c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8d69c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e90cc4 (entry size 12)
+  -> Extracted 9 entries
+SIGNATURE MATCH at offset 0x1f494d0 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f49590 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f49f98 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4a070 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4a4b8 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4a8c0 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4a9d0 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4b040 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4b1bc (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4b1c0 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f4b1c4 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f53c54 (entry size 12)
+  -> Extracted 302 entries
+SIGNATURE MATCH at offset 0x1f6d980 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f6de94 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f704ec (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f7076c (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f94020 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f94024 (entry size 12)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1fc70b0 (entry size 12)
+  -> Extracted 51 entries
+SIGNATURE MATCH at offset 0x1fc78b8 (entry size 12)
+  -> Extracted 51 entries
+SIGNATURE MATCH at offset 0x1fc80c0 (entry size 12)
+  -> Extracted 50 entries
+SIGNATURE MATCH at offset 0x1fca840 (entry size 12)
+  -> Extracted 113 entries
+SIGNATURE MATCH at offset 0x1fcb1e8 (entry size 12)
+  -> Extracted 51 entries
+SIGNATURE MATCH at offset 0x1fcc80c (entry size 12)
+  -> Extracted 50 entries
+SIGNATURE MATCH at offset 0x1fccf84 (entry size 12)
+  -> Extracted 287 entries
+Found 64 tables via signature matching (stride 12)
+SIGNATURE MATCH at offset 0x378dc (entry size 16)
+  -> Extracted 15 entries
+SIGNATURE MATCH at offset 0x378e0 (entry size 16)
+  -> Extracted 31 entries
+SIGNATURE MATCH at offset 0x378e8 (entry size 16)
+  -> Extracted 15 entries
+SIGNATURE MATCH at offset 0x38dac (entry size 16)
+  -> Extracted 34 entries
+SIGNATURE MATCH at offset 0x38db4 (entry size 16)
+  -> Extracted 33 entries
+SIGNATURE MATCH at offset 0xd3da0 (entry size 16)
+  -> Extracted 57 entries
+SIGNATURE MATCH at offset 0xd3da4 (entry size 16)
+  -> Extracted 60 entries
+SIGNATURE MATCH at offset 0xd3da8 (entry size 16)
+  -> Extracted 67 entries
+SIGNATURE MATCH at offset 0xd3dac (entry size 16)
+  -> Extracted 64 entries
+SIGNATURE MATCH at offset 0x195e1c (entry size 16)
+  -> Extracted 234 entries
+SIGNATURE MATCH at offset 0x19622c (entry size 16)
+  -> Extracted 169 entries
+SIGNATURE MATCH at offset 0x2263cc (entry size 16)
+  -> Extracted 57 entries
+SIGNATURE MATCH at offset 0x2263d0 (entry size 16)
+  -> Extracted 9 entries
+SIGNATURE MATCH at offset 0x2263d4 (entry size 16)
+  -> Extracted 50 entries
+SIGNATURE MATCH at offset 0x2263d8 (entry size 16)
+  -> Extracted 56 entries
+SIGNATURE MATCH at offset 0x1abbc10 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1d67980 (entry size 16)
+  -> Extracted 24 entries
+SIGNATURE MATCH at offset 0x1d67984 (entry size 16)
+  -> Extracted 22 entries
+SIGNATURE MATCH at offset 0x1d67988 (entry size 16)
+  -> Extracted 21 entries
+SIGNATURE MATCH at offset 0x1d6798c (entry size 16)
+  -> Extracted 24 entries
+SIGNATURE MATCH at offset 0x1de8560 (entry size 16)
+  -> Extracted 5 entries
+SIGNATURE MATCH at offset 0x1decbd4 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e055cc (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e10abc (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e10b54 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14648 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14654 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14690 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14768 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e1476c (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14770 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e14774 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e6a758 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a820 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a838 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a83c (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e7a844 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e85994 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8599c (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e873d0 (entry size 16)
+  -> Extracted 11 entries
+SIGNATURE MATCH at offset 0x1e8d614 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8d618 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e8d680 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1e90a00 (entry size 16)
+  -> Extracted 9 entries
+SIGNATURE MATCH at offset 0x1e90cc4 (entry size 16)
+  -> Extracted 9 entries
+SIGNATURE MATCH at offset 0x1e90ccc (entry size 16)
+  -> Extracted 8 entries
+SIGNATURE MATCH at offset 0x1f4b1bc (entry size 16)
+  -> Extracted 301 entries
+SIGNATURE MATCH at offset 0x1f4b1c0 (entry size 16)
+  -> Extracted 298 entries
+SIGNATURE MATCH at offset 0x1f4b1c4 (entry size 16)
+  -> Extracted 296 entries
+SIGNATURE MATCH at offset 0x1f4f1f0 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f69624 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f6e318 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f89944 (entry size 16)
+  -> Extracted 183 entries
+SIGNATURE MATCH at offset 0x1f899c4 (entry size 16)
+  -> Extracted 175 entries
+SIGNATURE MATCH at offset 0x1f89a44 (entry size 16)
+  -> Extracted 167 entries
+SIGNATURE MATCH at offset 0x1f94018 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f94020 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1f94024 (entry size 16)
+  -> Extracted 320 entries
+SIGNATURE MATCH at offset 0x1faf5b0 (entry size 16)
+  -> Extracted 96 entries
+SIGNATURE MATCH at offset 0x1faf5b8 (entry size 16)
+  -> Extracted 94 entries
+Found 52 tables via signature matching (stride 16)
+Signature matching found 119 large table(s) (>200 entries)
+Running targeted VGPIO scan for small tables (10-100 entries)...
+Total tables after VGPIO scan: 251
+Found 251 tables
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 34 pads from table
+Parsed 66 pads from table
+Parsed 42 pads from table
+Parsed 37 pads from table
+Parsed 253 pads from table
+Parsed 241 pads from table
+Parsed 226 pads from table
+Parsed 20 pads from table
+Parsed 20 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 44 pads from table
+Parsed 46 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 199 pads from table
+Parsed 147 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 201 pads from table
+Parsed 189 pads from table
+Parsed 255 pads from table
+Parsed 23 pads from table
+Parsed 25 pads from table
+Parsed 75 pads from table
+Parsed 21 pads from table
+Parsed 79 pads from table
+Parsed 56 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 207 pads from table
+Parsed 120 pads from table
+Parsed 44 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 30 pads from table
+Parsed 31 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 51 pads from table
+Parsed 51 pads from table
+Parsed 50 pads from table
+Parsed 113 pads from table
+Parsed 51 pads from table
+Parsed 50 pads from table
+Parsed 255 pads from table
+Parsed 31 pads from table
+Parsed 34 pads from table
+Parsed 33 pads from table
+Parsed 57 pads from table
+Parsed 60 pads from table
+Parsed 67 pads from table
+Parsed 64 pads from table
+Parsed 234 pads from table
+Parsed 169 pads from table
+Parsed 57 pads from table
+Parsed 50 pads from table
+Parsed 56 pads from table
+Parsed 255 pads from table
+Parsed 24 pads from table
+Parsed 22 pads from table
+Parsed 21 pads from table
+Parsed 24 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 183 pads from table
+Parsed 175 pads from table
+Parsed 167 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 255 pads from table
+Parsed 96 pads from table
+Parsed 94 pads from table
+Detected VGPIO table: VGPIO_0 (10 entries)
+Parsed 10 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO (36 entries)
+Parsed 36 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO (37 entries)
+Parsed 37 pads from table
+Detected VGPIO table: VGPIO_0 (10 entries)
+Parsed 10 pads from table
+Detected VGPIO table: VGPIO_0 (13 entries)
+Parsed 13 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO (36 entries)
+Parsed 36 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO_PCIE (81 entries)
+Parsed 81 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO_PCIE (78 entries)
+Parsed 78 pads from table
+Detected VGPIO table: VGPIO_PCIE (81 entries)
+Parsed 81 pads from table
+Detected VGPIO table: VGPIO_PCIE (81 entries)
+Parsed 81 pads from table
+Detected VGPIO table: VGPIO_PCIE (80 entries)
+Parsed 80 pads from table
+Detected VGPIO table: VGPIO (36 entries)
+Parsed 36 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO_0 (13 entries)
+Parsed 13 pads from table
+Detected VGPIO table: VGPIO_PCIE (81 entries)
+Parsed 81 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO (37 entries)
+Parsed 37 pads from table
+Detected VGPIO table: VGPIO_0 (12 entries)
+Parsed 12 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO (40 entries)
+Parsed 40 pads from table
+Detected VGPIO table: VGPIO_0 (11 entries)
+Parsed 11 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO_0 (10 entries)
+Parsed 10 pads from table
+Detected VGPIO table: VGPIO_0 (11 entries)
+Parsed 11 pads from table
+Detected VGPIO table: VGPIO_0 (12 entries)
+Parsed 12 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO_0 (12 entries)
+Parsed 12 pads from table
+Detected VGPIO table: VGPIO_0 (13 entries)
+Parsed 13 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO_PCIE (81 entries)
+Parsed 81 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO (36 entries)
+Parsed 36 pads from table
+Detected VGPIO table: VGPIO_PCIE (81 entries)
+Parsed 81 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO (39 entries)
+Parsed 39 pads from table
+Detected VGPIO table: VGPIO_PCIE (78 entries)
+Parsed 78 pads from table
+Detected VGPIO table: VGPIO (36 entries)
+Parsed 36 pads from table
+Detected VGPIO table: VGPIO_PCIE (81 entries)
+Parsed 81 pads from table
+Detected VGPIO table: VGPIO_PCIE (78 entries)
+Parsed 78 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO_PCIE (78 entries)
+Parsed 78 pads from table
+Detected VGPIO table: VGPIO_PCIE (79 entries)
+Parsed 79 pads from table
+Detected VGPIO table: VGPIO_PCIE (78 entries)
+Parsed 78 pads from table
+Detected VGPIO table: VGPIO_PCIE (78 entries)
+Parsed 78 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO_0 (11 entries)
+Parsed 11 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO (37 entries)
+Parsed 37 pads from table
+Detected VGPIO table: VGPIO_PCIE (82 entries)
+Parsed 82 pads from table
+Detected VGPIO table: VGPIO_PCIE (78 entries)
+Parsed 78 pads from table
+Detected VGPIO table: VGPIO (36 entries)
+Parsed 36 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO (38 entries)
+Parsed 38 pads from table
+Detected VGPIO table: VGPIO_0 (10 entries)
+Parsed 10 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO_0 (13 entries)
+Parsed 13 pads from table
+Detected VGPIO table: VGPIO_0 (14 entries)
+Parsed 14 pads from table
+Detected VGPIO table: VGPIO (37 entries)
+Parsed 37 pads from table
+Loaded 367 reference pads
+Selected Base Table #97 (Score: 168)
+Starting Oracle Composition...
+Final Composite Score: 360/367
+VGPIO_USB_1 found in Table #Unknown: DW0=0xa8c847d1, DW1=0x0006aa81
+
+=== Conflict Analysis ===
+Remaining Missing Pads: 7
+Pad VGPIO_12 is NOT found correctly in any remaining table (or was never found).
+Pad VGPIO_USB_0 is NOT found correctly in any remaining table (or was never found).
+Pad VGPIO_USB_2 is NOT found correctly in any remaining table (or was never found).
+Pad VGPIO_USB_3 is NOT found correctly in any remaining table (or was never found).
+Pad VGPIO_USB_8 is NOT found correctly in any remaining table (or was never found).
+Pad VGPIO_USB_10 is NOT found correctly in any remaining table (or was never found).
+Pad VGPIO_USB_11 is NOT found correctly in any remaining table (or was never found).

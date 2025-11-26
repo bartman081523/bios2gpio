@@ -108,7 +108,7 @@ class GPIOGenerator:
             'UP_2K': 'UP_2K',
             'UP_5K': 'UP_5K',
             'UP_20K': 'UP_20K',
-            'UP_1K_2K': 'UP_1K_2K',
+            'UP_1K_2K': 'UP_2K',  # Map to UP_2K as UP_1K_2K doesn't exist in coreboot
             'NATIVE': 'NATIVE',
         }
         term = term_map.get(termination, 'NONE')

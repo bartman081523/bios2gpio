@@ -18,12 +18,12 @@ class GPIOTableDetector:
     def __init__(self, platform='alderlake'):
         """
         Initialize GPIO table detector.
-        
+
         Args:
             platform: Platform name (currently only 'alderlake' supported)
         """
         self.platform = platform
-        
+
         # Platform-specific configuration
         if platform == 'alderlake':
             self.gpio_groups = GPIO_GROUPS
@@ -90,7 +90,7 @@ class GPIOTableDetector:
                 if len(entries) >= 20:
                     # Check if this is a VGPIO table
                     is_vgpio = self._is_vgpio_table(entries)
-                    
+
                     table_info = {
                         'offset': offset,
                         'entry_size': entry_size,
@@ -108,27 +108,27 @@ class GPIOTableDetector:
     def scan_for_tables(self, data: bytes, min_entries: int = 10) -> List[Dict]:
         """
         Scan for GPIO tables using multiple strategies.
-        
+
         Returns both signature-matched standard GPIO tables and VGPIO tables.
         """
         all_tables = []
-        
+
         # Strategy 1: Signature matching for standard GPIOs (8-byte stride)
         for entry_size in [8, 12, 16]:
             sig_tables = self.scan_for_signature(data, entry_size)
             if sig_tables:
                 logger.info(f"Found {len(sig_tables)} tables via signature matching (stride {entry_size})")
                 all_tables.extend(sig_tables)
-        
+
         # Check if signature matching found sufficient tables
         # If we found at least one large table (>200 entries), we likely have the main GPIO table
         # Run targeted VGPIO scan instead of full pattern scan
         large_tables = [t for t in all_tables if t['entry_count'] > 200]
-        
+
         if large_tables:
             logger.info(f"Signature matching found {len(large_tables)} large table(s) (>200 entries)")
             logger.info(f"Running targeted VGPIO scan for small tables (10-100 entries)...")
-            
+
             # Targeted scan for VGPIOs only (10-100 entries)
             for entry_size in [12, 16]:
                 vgpio_candidates = self._scan_for_vgpios(data, entry_size, min_entries=10, max_entries=100)
@@ -139,10 +139,10 @@ class GPIOTableDetector:
                     )
                     if not is_duplicate:
                         all_tables.append(table)
-            
+
             logger.info(f"Total tables after VGPIO scan: {len(all_tables)}")
             return all_tables
-        
+
         # Strategy 2: Full pattern scanning (fallback if no signature matches found)
         # Only scan if we didn't find large tables via signature matching
         logger.info("Running full pattern scan to find tables...")
@@ -156,7 +156,7 @@ class GPIOTableDetector:
                 )
                 if not is_duplicate:
                     all_tables.append(table)
-        
+
         return all_tables
 
     def _scan_fixed_size_entries(self, data: bytes, entry_size: int, min_entries: int) -> List[Dict]:
@@ -164,16 +164,16 @@ class GPIOTableDetector:
         tables = []
         data_len = len(data)
         offset = 0
-        
+
         # For VGPIO detection, we're specifically looking for small tables
         # Skip large scans if we're looking for VGPIOs
         max_scan_entries = 350
-        
+
         while offset < data_len - (entry_size * min_entries):
             valid_count = 0
             current_offset = offset
             entries = []
-            
+
             while current_offset + entry_size <= data_len and valid_count < max_scan_entries:
                 try:
                     if entry_size >= 8:
@@ -188,11 +188,11 @@ class GPIOTableDetector:
                         break
                 except:
                     break
-            
+
             if valid_count >= min_entries and valid_count < max_scan_entries:
                 # Check if this is a VGPIO table
                 is_vgpio = self._is_vgpio_table(entries)
-                
+
                 # Only keep VGPIO tables or large standard tables
                 # Skip medium-sized non-VGPIO tables to reduce noise
                 if is_vgpio or valid_count > 100:
@@ -206,38 +206,38 @@ class GPIOTableDetector:
                         'is_vgpio': is_vgpio
                     }
                     tables.append(table_info)
-                
+
                 offset = current_offset
             else:
                 offset += 4
-        
+
         return tables
 
     def _scan_for_vgpios(self, data: bytes, entry_size: int, min_entries: int, max_entries: int) -> List[Dict]:
         """
         Targeted scan for VGPIO tables only.
-        
+
         This method scans for small tables (10-100 entries) and uses the VGPIO heuristic
         to filter out false positives. This is much faster than the full pattern scan.
-        
+
         Args:
             data: Binary data to scan
             entry_size: Size of each entry (12 or 16 bytes for VGPIOs)
             min_entries: Minimum number of entries to consider
             max_entries: Maximum number of entries to consider
-            
+
         Returns:
             List of VGPIO table dictionaries
         """
         tables = []
         data_len = len(data)
         offset = 0
-        
+
         while offset < data_len - (entry_size * min_entries):
             valid_count = 0
             current_offset = offset
             entries = []
-            
+
             # Scan for consecutive valid entries, but stop at max_entries
             while current_offset + entry_size <= data_len and valid_count < max_entries:
                 try:
@@ -250,11 +250,11 @@ class GPIOTableDetector:
                         break
                 except:
                     break
-            
+
             # Only keep if it's VGPIO-sized and passes VGPIO heuristic
             if min_entries <= valid_count <= max_entries:
                 is_vgpio = self._is_vgpio_table(entries)
-                
+
                 if is_vgpio:
                     table_info = {
                         'offset': offset,
@@ -267,22 +267,22 @@ class GPIOTableDetector:
                     }
                     tables.append(table_info)
                     logger.debug(f"Found VGPIO table: {valid_count} entries at offset 0x{offset:x}, stride={entry_size}")
-                
+
                 offset = current_offset
             else:
                 offset += 4
-        
+
         return tables
 
 
     def _is_valid_pad_config(self, config: AlderLakeGpioPadConfig) -> bool:
         """Check if a pad config looks valid"""
         return config.validate()
-    
+
     def _is_vgpio_table(self, entries: List[Dict]) -> bool:
         """
         Detect if a table likely contains VGPIOs based on characteristics.
-        
+
         VGPIOs typically have:
         - NAFVWE bit set (DW0[27])
         - DEEP reset (DW0[31:30] = 0b01)
@@ -291,39 +291,39 @@ class GPIOTableDetector:
         """
         if not entries:
             return False
-        
+
         entry_count = len(entries)
-        
+
         # Check for known VGPIO table sizes
         vgpio_sizes = [12, 38, 80]  # VGPIO_USB, VGPIO, VGPIO_PCIE
         size_match = any(abs(entry_count - size) <= 2 for size in vgpio_sizes)
-        
+
         # Check characteristics of first few entries
         nafvwe_count = 0
         deep_reset_count = 0
-        
+
         for entry in entries[:min(10, len(entries))]:
             config = entry['config']
-            
+
             # Check for NAFVWE bit (DW0[27])
             if config.dw0 & (1 << 27):
                 nafvwe_count += 1
-            
+
             # Check for DEEP reset (0b01 in DW0[31:30])
             reset_val = (config.dw0 >> 30) & 0x3
             if reset_val == 0b01:
                 deep_reset_count += 1
-        
+
         # If most entries have NAFVWE or DEEP reset, likely VGPIO
         sample_size = min(10, len(entries))
         nafvwe_ratio = nafvwe_count / sample_size if sample_size > 0 else 0
         deep_ratio = deep_reset_count / sample_size if sample_size > 0 else 0
-        
+
         is_vgpio = (size_match and (nafvwe_ratio > 0.5 or deep_ratio > 0.7))
-        
+
         if is_vgpio:
             logger.debug(f"VGPIO table detected: {entry_count} entries, NAFVWE={nafvwe_ratio:.1%}, DEEP={deep_ratio:.1%}")
-        
+
         return is_vgpio
 
     def _calculate_confidence(self, entries: List[Dict]) -> float:
@@ -333,16 +333,16 @@ class GPIOTableDetector:
     def filter_best_tables(self, tables: List[Dict], max_tables: int = 3) -> List[Dict]:
         """
         Filter and return the best GPIO tables.
-        
+
         Returns both the best standard GPIO table and any VGPIO tables found.
         """
         # Separate signature matches, VGPIOs, and regular tables
         sig_matches = [t for t in tables if t.get('is_signature_match')]
         vgpio_tables = [t for t in tables if t.get('is_vgpio')]
         regular_tables = [t for t in tables if not t.get('is_signature_match') and not t.get('is_vgpio')]
-        
+
         result = []
-        
+
         # Priority 1: Signature match (best standard GPIO table)
         if sig_matches:
             # Z690 usually has ~252 pads
@@ -355,7 +355,7 @@ class GPIOTableDetector:
             # No signature match, use highest confidence regular table
             regular_tables.sort(key=lambda t: t['confidence'], reverse=True)
             result.append(regular_tables[0])
-        
+
         # Priority 2: Add VGPIO tables
         if vgpio_tables:
             # Sort VGPIOs by size to get them in order (VGPIO_USB=12, VGPIO=38, VGPIO_PCIE=80)
@@ -364,7 +364,7 @@ class GPIOTableDetector:
             for vt in vgpio_tables:
                 logger.info(f"  VGPIO table: {vt['entry_count']} entries at offset 0x{vt['offset']:x}, stride={vt['entry_size']}")
                 result.append(vt)
-        
+
         return result
 
     def scan_file(self, file_path: Path, min_entries: int = 10) -> List[Dict]:

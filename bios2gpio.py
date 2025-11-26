@@ -8,11 +8,10 @@ bios2gpio - Extract GPIO configuration from vendor BIOS images
 import sys
 import argparse
 import logging
-import json
+import os
 import re
 import shutil
 from pathlib import Path
-from typing import Dict, List, Any, Optional
 
 # Add current directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -33,202 +32,108 @@ logger = logging.getLogger(__name__)
 
 def find_ghidra_home():
     """Attempts to find Ghidra installation path."""
+    # Check subfolder
     local_ghidra = Path(__file__).parent / "ghidra"
     if (local_ghidra / "support" / "analyzeHeadless").exists():
         return str(local_ghidra)
 
+    # Check PATH
     headless_path = shutil.which("analyzeHeadless")
     if headless_path:
+        # analyzeHeadless is usually in $GHIDRA_HOME/support/analyzeHeadless
         return str(Path(headless_path).parent.parent)
+
     return None
 
-def parse_reference_header(filepath: Path) -> Dict[str, int]:
-    """Parses a reference gpio.h file for Oracle Composition."""
+def parse_calibration_header(filepath):
+    """Parses a gpio.h file to extract expected pad modes for calibration."""
     modes = {}
     regex = re.compile(r'^\s*PAD_CFG_([A-Z0-9_]+)\s*\(([^,]+),')
-    vgpio_regex = re.compile(r'^\s*_PAD_CFG_STRUCT\s*\(([^,]+),\s*(.+?),')
+
+    macro_map = {
+        'GPO': 0, 'GPI': 0, 'NF': 1 # Default NF1
+    }
 
     try:
         with open(filepath, 'r') as f:
             for line in f:
                 match = regex.match(line)
                 if match:
+                    mtype = match.group(1)
                     pad = match.group(2).strip()
                     mode = 0
-                    mtype = match.group(1)
+
                     if 'NF' in mtype:
+                        # Try to find NFx arg
                         parts = line.split(',')
                         if len(parts) >= 4 and 'NF' in parts[3]:
-                            try: mode = int(parts[3].strip().replace('NF', '').replace(')', ''))
-                            except: mode = 1
-                        else: mode = 1
-                    modes[pad] = mode
-                    continue
+                            try:
+                                mode = int(parts[3].strip().replace('NF', '').replace(')', ''))
+                            except:
+                                mode = 1
+                        else:
+                            mode = 1
 
-                vgpio_match = vgpio_regex.match(line)
+                    modes[pad] = mode
+
+                # Handle _PAD_CFG_STRUCT for VGPIOs
+                # _PAD_CFG_STRUCT(VGPIO_PCIE_0, PAD_FUNC(NF1) | PAD_RESET(DEEP) | PAD_CFG0_NAFVWE_ENABLE, 0),
+                vgpio_match = re.match(r'^\s*_PAD_CFG_STRUCT\s*\(([^,]+),\s*(.+?),', line)
                 if vgpio_match:
                     pad = vgpio_match.group(1).strip()
                     config_str = vgpio_match.group(2)
-                    mode = 0
+                    mode = 0 # Default GPIO
+
                     if 'PAD_FUNC(NF' in config_str:
+                        # Extract NF number
                         nf_match = re.search(r'PAD_FUNC\(NF(\d+)\)', config_str)
-                        if nf_match: mode = int(nf_match.group(1))
-                        else: mode = 1
+                        if nf_match:
+                            mode = int(nf_match.group(1))
+                        else:
+                            mode = 1 # Assume NF1 if not specified number
+                    elif 'PAD_FUNC(GPIO)' in config_str:
+                        mode = 0
+
                     modes[pad] = mode
     except Exception as e:
-        logger.error(f"Failed to parse reference: {e}")
-        return {}
+        logger.error(f"Failed to parse calibration header: {e}")
+        return None
+
     return modes
 
-def _get_pad_mode(pad: Dict) -> int:
-    if pad['mode'].startswith('NF'):
-        try: return int(pad['mode'][2:])
-        except: return 1
-    return 0
-
-def _is_valid_entry(pad: Dict) -> bool:
-    dw0 = int(pad['dw0'], 16)
-    dw1 = int(pad['dw1'], 16)
-    return not (dw0 == 0 and dw1 == 0) and dw0 != 0xFFFFFFFF
-
-def compose_gpio_state(all_tables: List[Dict], best_base_table: Dict,
-                      reference_path: Optional[Path], ghidra_data: Optional[Dict] = None) -> List[Dict]:
-    """
-    Core Logic: Reconstructs the final GPIO state by layering tables.
-    """
-    logger.info("Starting GPIO State Composition...")
-
-    parser = GPIOParser(platform='alderlake')
-    parsed_tables = []
-
-    # 1. Parse all candidate tables
-    for i, t in enumerate(all_tables):
-        pads = parser.parse_table(t)
-        parsed_tables.append({
-            'id': i, 'offset': t['offset'], 'count': t['entry_count'],
-            'is_vgpio': t.get('is_vgpio', False), 'pads': pads
-        })
-
-    # 2. Parse Base Table
-    base_pads = parser.parse_table(best_base_table)
-    current_state = {p['name']: p for p in base_pads}
-    logger.info(f"Initialized state from Base Table at 0x{best_base_table['offset']:x}")
-
-    # 3. Load Reference (Oracle Mode)
-    reference = {}
-    if reference_path:
-        reference = parse_reference_header(reference_path)
-        logger.info(f"Loaded {len(reference)} reference pads for Oracle Composition")
-
-    # 4. Apply Layers
-    if reference:
-        # ORACLE MODE: Use reference to cherry-pick correct values
-        corrections = 0
-        for t in parsed_tables:
-            # Skip if it's the base table
-            if t['offset'] == best_base_table['offset']: continue
-
-            for p in t['pads']:
-                name = p['name']
-                if not _is_valid_entry(p): continue
-                if name in reference:
-                    # If this table has the CORRECT value
-                    if _get_pad_mode(p) == reference[name]:
-                        # And current state is WRONG/MISSING
-                        if name not in current_state or _get_pad_mode(current_state[name]) != reference[name]:
-                            current_state[name] = p
-                            corrections += 1
-        logger.info(f"Oracle Mode: Applied {corrections} corrections from layer tables")
-    else:
-        # BLIND MODE: Heuristic Layering
-        # Group VGPIO tables and pick best
-        vgpio_groups = {'VGPIO': [], 'VGPIO_USB': [], 'VGPIO_PCIE': []}
-        for t in parsed_tables:
-            if not t['is_vgpio'] or not t['pads']: continue
-            first = t['pads'][0]['name']
-            if 'VGPIO_USB' in first: vgpio_groups['VGPIO_USB'].append(t)
-            elif 'VGPIO_PCIE' in first: vgpio_groups['VGPIO_PCIE'].append(t)
-            elif 'VGPIO' in first: vgpio_groups['VGPIO'].append(t)
-
-        for group, tables in vgpio_groups.items():
-            # Pick table with most valid entries
-            best_t = max(tables, key=lambda t: sum(1 for p in t['pads'] if _is_valid_entry(p)), default=None)
-            if best_t:
-                logger.info(f"Blind Mode: Layering {group} from Table at 0x{best_t['offset']:x}")
-                for p in best_t['pads']:
-                    if _is_valid_entry(p): current_state[p['name']] = p
-
-    # 5. Gap Filling (VGPIO Synthesis)
-    # Fills missing VGPIOs with NF1/DEEP default or Ghidra data
-    synthesized = 0
-    all_possible_vgpios = [f"VGPIO_USB_{i}" for i in range(12)] + [f"VGPIO_{i}" for i in range(39)]
-
-    for name in all_possible_vgpios:
-        if name not in current_state:
-            # If we have reference, only synthesize if it exists there
-            if reference and name not in reference: continue
-
-            # Check Ghidra Data first for VGPIO_USB_0
-            if name == 'VGPIO_USB_0' and ghidra_data:
-                candidates = ghidra_data.get('vgpio_usb_0_candidates', [])
-                if candidates:
-                    cand = candidates[0]
-                    val_int = int(cand['value'], 16)
-                    # Basic sanity check on mode/reset bits
-                    if val_int & 0xFFFFFFFF:
-                        current_state[name] = {
-                            'name': name, 'mode': 'NF1', 'reset': 'DEEP',
-                            'direction': 'INPUT', 'termination': 'NONE',
-                            'dw0': cand['value'], 'dw1': '0x00000000',
-                            'is_synthesized': True, 'source': 'Ghidra'
-                        }
-                        logger.info(f"Ghidra: Found VGPIO_USB_0 candidate at {cand['address']} ({cand['value']})")
-                        synthesized += 1
-                        continue
-
-            # Fallback: Synthesize NF1 Default
-            current_state[name] = {
-                'name': name, 'mode': 'NF1', 'reset': 'DEEP',
-                'direction': 'INPUT', 'termination': 'NONE',
-                'dw0': '0x44000400', 'dw1': '0x00000000',
-                'is_synthesized': True
-            }
-            synthesized += 1
-
-    if synthesized:
-        logger.info(f"Gap Filling: Synthesized {synthesized} missing VGPIO pads")
-
-    # 6. Sort and Return
-    dummy_parser = GPIOParser() # Helper to access merge/sort logic
-    wrapped_state = {'tables': [{'pads': list(current_state.values())}]}
-    return dummy_parser.merge_tables(wrapped_state)
-
 def main():
-    parser = argparse.ArgumentParser(description='Extract GPIO configuration from vendor BIOS images')
+    parser = argparse.ArgumentParser(
+        description='Extract GPIO configuration from vendor BIOS images'
+    )
+
     parser.add_argument('--platform', default='alderlake', choices=['alderlake'])
     parser.add_argument('--input', '-i', required=True)
     parser.add_argument('--output', '-o')
     parser.add_argument('--json', '-j')
+    parser.add_argument('--report', '-r')
     parser.add_argument('--work-dir', '-w')
     parser.add_argument('--min-entries', type=int, default=10)
     parser.add_argument('--verbose', '-v', action='store_true')
-    parser.add_argument('--calibrate-with', help='Path to reference gpio.h (for Composition/Calibration)')
-    parser.add_argument('--compose', action='store_true', help='Enable Multi-Table Composition Mode (Recommended)')
-    parser.add_argument('--analyze-ghidra', action='store_true')
-    parser.add_argument('--no-ghidra', action='store_true')
-    parser.add_argument('--ghidra-home')
+    parser.add_argument('--calibrate-with', help='Path to reference gpio.h for scoring candidates')
+
+    # Ghidra integration arguments
+    parser.add_argument('--analyze-ghidra', action='store_true', help='Run Ghidra headless analysis to find GPIO loops')
+    parser.add_argument('--no-ghidra', action='store_true', help='Disable Ghidra analysis even if detected')
+    parser.add_argument('--ghidra-home', help='Path to Ghidra installation root')
 
     args = parser.parse_args()
-    if args.verbose: logging.getLogger().setLevel(logging.DEBUG)
 
-    # Ghidra Setup
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+    # Auto-detect Ghidra if not explicitly configured
     if not args.ghidra_home:
         found_home = find_ghidra_home()
         if found_home:
             args.ghidra_home = found_home
             if not args.no_ghidra and not args.analyze_ghidra:
+                logger.info(f"Ghidra detected at {args.ghidra_home}. Enabling analysis.")
                 args.analyze_ghidra = True
-                logger.info(f"Ghidra detected at {args.ghidra_home}. Analysis enabled.")
 
     input_path = Path(args.input)
     if not input_path.exists():
@@ -236,46 +141,88 @@ def main():
         return 1
 
     logger.info(f"bios2gpio - Extracting GPIO from {input_path}")
+    logger.info(f"Platform: {args.platform}")
 
     try:
-        # Step 1: Extract
+        # Step 1: Extract UEFI modules
+        logger.info("Step 1: Extracting UEFI modules...")
         extractor = UEFIExtractor(str(input_path), args.work_dir)
+        if not extractor.check_dependencies(): return 1
+
         bios_region = extractor.get_bios_region()
         modules = extractor.find_modules(GPIO_MODULE_PATTERNS)
         all_binaries = extractor.get_all_binary_files()
 
-        # Step 2: Ghidra (Optional)
-        ghidra_results = None
+        # GHIDRA ANALYSIS LOGIC
         if args.analyze_ghidra:
-            target_module = None
-            # Prioritize PchInit or GpioInit
-            for m in modules:
-                if 'PchInit' in m['name'] or 'GpioInit' in m['name']:
-                    if m['path'].suffix.lower() in ['.efi', '.pe32']:
-                        target_module = m['path']
-                        break
+            if not args.ghidra_home:
+                logger.error("Ghidra analysis requested but GHIDRA_HOME not found/specified.")
+                return 1
 
-            # Fallback to anything with 'Pch'
-            if not target_module:
-                for b in all_binaries:
-                    if 'PchInit' in b.name:
-                        target_module = b
-                        break
+            logger.info(f"Starting Ghidra Analysis using {args.ghidra_home}...")
 
-            if target_module:
-                logger.info(f"Running Ghidra analysis on {target_module.name}...")
-                ghidra_results = run_ghidra_analysis(target_module, args.ghidra_home, "find_gpio_tables.py")
-                if ghidra_results:
-                    logger.info("Ghidra analysis completed successfully.")
+            # Identify candidates for Ghidra analysis
+            # We prefer PE32 modules like PchInitDxe, GpioInit, etc.
+            candidates = []
+
+            def is_valid_binary(path):
+                # Only accept .efi/.pe32 files, or body.bin inside a PE32 section
+                if path.suffix.lower() in ['.efi', '.pe32']:
+                    return True
+                if path.name.lower() == 'body.bin':
+                    # Check if parent directory indicates a PE32 section
+                    # UEFIExtract usually names it "PE32 image section"
+                    return 'pe32 image section' in path.parent.name.lower()
+                return False
+
+            if modules:
+                for m in modules:
+                    p = Path(m['path'])
+                    if is_valid_binary(p):
+                        candidates.append(p)
             else:
-                logger.warning("Could not find suitable module (PchInit) for Ghidra analysis.")
+                # Fallback: try to find files with 'PchInit' or 'Gpio' in name
+                for b in all_binaries:
+                    if ('Init' in b.name or 'Gpio' in b.name) and is_valid_binary(b):
+                        candidates.append(b)
 
-        # Step 3: Detect
+            if not candidates:
+                logger.error("No suitable modules found for Ghidra analysis.")
+                return 1
+
+            logger.info(f"Found {len(candidates)} candidate modules for analysis.")
+
+            success_count = 0
+            for cand in candidates:
+                logger.info(f"Analyzing {cand.name}...")
+                if run_ghidra_analysis(cand, ghidra_home=args.ghidra_home):
+                    success_count += 1
+                else:
+                    logger.warning(f"Analysis failed for {cand.name}")
+
+            logger.info(f"Ghidra analysis completed. Successful: {success_count}/{len(candidates)}")
+            # For now, we don't stop here, we continue to the standard detection
+            # In the future, we could use the Ghidra output to seed the detector
+
+        # Step 2: Detect GPIO tables
+        logger.info("Step 2: Detecting GPIO tables...")
         detector = GPIOTableDetector(platform=args.platform)
+
         files_to_scan = []
-        if bios_region and bios_region.exists(): files_to_scan.append(bios_region)
-        elif modules: files_to_scan.extend([m['path'] for m in modules])
-        else: files_to_scan.extend(all_binaries[:50])
+
+        # Priority 1: Scan the BIOS region file (contains all GPIO tables)
+        if bios_region and bios_region.exists():
+            files_to_scan.append(bios_region)
+            logger.info(f"Scanning BIOS region: {bios_region}")
+        # Priority 2: If no BIOS region, scan GPIO-specific modules
+        elif modules:
+            files_to_scan.extend([m['path'] for m in modules])
+            logger.info(f"Scanning {len(modules)} GPIO modules")
+        # Fallback: Scan all binaries (slow)
+        else:
+            files_to_scan.extend(all_binaries[:50])  # Limit to first 50 to avoid excessive scanning
+            logger.info(f"Scanning first 50 binary files")
+
         files_to_scan = list(set(files_to_scan))
 
         logger.info(f"Scanning {len(files_to_scan)} files...")
@@ -288,35 +235,157 @@ def main():
             logger.error("No GPIO tables found")
             return 1
 
-        # Step 4: Select/Compose
-        best_tables_filtered = detector.filter_best_tables(all_tables)
-        if not best_tables_filtered:
-            logger.error("Could not determine a valid base table.")
-            return 1
+        logger.info(f"Detected {len(all_tables)} potential tables")
 
-        best_base_table = best_tables_filtered[0]
+        # CALIBRATION LOGIC
+        # Strategy: Calibrate to find the best PHYSICAL GPIO table (8-byte stride)
+        # but keep ALL VGPIO tables (12/16-byte stride) for complete coverage
+        if args.calibrate_with:
+            ref_modes = parse_calibration_header(args.calibrate_with)
+            if ref_modes:
+                logger.info(f"Calibrating against {len(ref_modes)} reference pads...")
+                parser = GPIOParser(platform=args.platform)
 
-        final_pads = []
+                # Separate physical GPIO tables from VGPIO tables
+                physical_tables = []
+                vgpio_tables = []
 
-        if args.compose:
-            ref_path = Path(args.calibrate_with) if args.calibrate_with else None
-            final_pads = compose_gpio_state(all_tables, best_base_table, ref_path, ghidra_results)
+                for table in all_tables:
+                    # Use is_vgpio flag if available, otherwise check entry_size AND entry_count
+                    is_vgpio = table.get('is_vgpio', False)
+
+                    # If not explicitly marked as VGPIO, check if it could be one based on size
+                    if not is_vgpio and table.get('entry_size', 8) > 8:
+                        # Double-check: only classify as VGPIO if size matches known VGPIO ranges
+                        # VGPIO_USB: 12-14 entries
+                        # VGPIO: 37-38 entries
+                        # VGPIO_PCIE: 78-81 entries
+                        count = table.get('entry_count', 0)
+                        is_vgpio = (10 <= count <= 15) or (35 <= count <= 40) or (75 <= count <= 85)
+
+                    if is_vgpio:
+                        table['is_vgpio'] = True
+                        vgpio_tables.append(table)
+                    else:
+                        physical_tables.append(table)
+
+                logger.info(f"Found {len(physical_tables)} physical GPIO tables and {len(vgpio_tables)} VGPIO tables")
+
+                # Calibrate physical GPIO tables
+                best_score = -1
+                best_physical_table = None
+
+                for table in physical_tables:
+                    # Parse this table
+                    pads = parser.parse_table(table)
+
+                    # Score it
+                    score = 0
+                    for pad in pads:
+                        name = pad['name']
+                        if name in ref_modes:
+                            # Mode match?
+                            ext_mode = 0
+                            if pad['mode'].startswith('NF'):
+                                try: ext_mode = int(pad['mode'][2:])
+                                except: ext_mode = 1
+
+                            if ext_mode == ref_modes[name]:
+                                score += 1
+
+                    # Normalize score by table size to penalize garbage
+                    accuracy = score / len(ref_modes) if ref_modes else 0
+                    logger.info(f"Physical GPIO Table at {table['offset']:x} (Size {table['entry_count']}): Score {score} ({accuracy*100:.1f}%)")
+
+                    if score > best_score:
+                        best_score = score
+                        best_physical_table = table
+
+                # Calibrate VGPIO tables
+                # Group by type
+                vgpio_groups = {
+                    'VGPIO_USB': [],   # 10-15 entries
+                    'VGPIO': [],       # 35-42 entries
+                    'VGPIO_PCIE': []   # 75-85 entries
+                }
+
+                for table in vgpio_tables:
+                    count = table.get('entry_count', 0)
+                    if 10 <= count <= 15:
+                        vgpio_groups['VGPIO_USB'].append(table)
+                    elif 35 <= count <= 42:
+                        vgpio_groups['VGPIO'].append(table)
+                    elif 75 <= count <= 85:
+                        vgpio_groups['VGPIO_PCIE'].append(table)
+
+                best_vgpio_tables = []
+
+                for group_name, candidates in vgpio_groups.items():
+                    if not candidates:
+                        continue
+
+                    best_group_score = -1
+                    best_group_table = None
+
+                    for table in candidates:
+                        # Parse this table (parser handles VGPIO naming based on size)
+                        pads = parser.parse_table(table)
+
+                        # Score it
+                        score = 0
+                        valid_pads = 0
+                        for pad in pads:
+                            name = pad['name']
+                            if name in ref_modes:
+                                valid_pads += 1
+                                # Mode match?
+                                ext_mode = 0
+                                if pad['mode'].startswith('NF'):
+                                    try: ext_mode = int(pad['mode'][2:])
+                                    except: ext_mode = 1
+
+                                if ext_mode == ref_modes[name]:
+                                    score += 1
+
+                        # For VGPIO, we care about how many valid pads we found that match the reference
+                        logger.info(f"{group_name} Candidate at {table['offset']:x} (Size {table['entry_count']}): Score {score}/{valid_pads}")
+
+                        if score > best_group_score:
+                            best_group_score = score
+                            best_group_table = table
+
+                    if best_group_table:
+                        logger.info(f"Selected best {group_name} table at {best_group_table['offset']:x} with score {best_group_score}")
+                        best_vgpio_tables.append(best_group_table)
+
+                if best_physical_table:
+                    logger.info(f"CALIBRATION WINNER (Physical GPIO): Table at {best_physical_table['offset']:x} with score {best_score}")
+                    # Use the best physical table + best VGPIO tables
+                    best_tables = [best_physical_table] + best_vgpio_tables
+                    logger.info(f"Using {len(best_tables)} tables total (1 physical + {len(best_vgpio_tables)} VGPIO)")
+                else:
+                    logger.warning("Calibration failed to find a valid physical table, using all detected tables")
+                    best_tables = all_tables
+            else:
+                best_tables = detector.filter_best_tables(all_tables)
         else:
-            logger.info("Using Standard Mode (Best Detected Tables)")
-            parser = GPIOParser(platform=args.platform)
-            parsed_data = parser.parse_multiple_tables(best_tables_filtered)
-            final_pads = parser.merge_tables(parsed_data)
+            best_tables = detector.filter_best_tables(all_tables)
 
-        logger.info(f"Final Configuration contains {len(final_pads)} pads")
+        # Step 3: Parse
+        logger.info("Step 3: Parsing GPIO configurations...")
+        parser = GPIOParser(platform=args.platform)
+        parsed_data = parser.parse_multiple_tables(best_tables)
+        merged_pads = parser.merge_tables(parsed_data)
 
-        # Step 5: Generate Output
+        logger.info(f"Merged to {len(merged_pads)} unique pads")
+
+        # Step 4: Generate
         generator = GPIOGenerator(platform=args.platform)
         if args.json:
-            export_data = {'source': str(input_path), 'pads': final_pads}
-            parser = GPIOParser() # Helper
-            parser.export_json(export_data, Path(args.json))
+            parsed_data['pads'] = merged_pads
+            parser.export_json(parsed_data, Path(args.json))
         if args.output:
-            generator.generate_coreboot_header(final_pads, Path(args.output))
+            generator.generate_coreboot_header(merged_pads, Path(args.output))
 
         return 0
 

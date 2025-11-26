@@ -3,12 +3,15 @@
 
 """
 compare_images.py - Compare GPIO configurations between two vendor BIOS images.
-Splits analysis into Physical and Virtual domains to validate board compatibility.
+
+This tool extracts GPIO tables from two different BIOS images and performs
+a pad-by-pad comparison to determine if they share the same configuration.
 """
 
 import argparse
 import logging
 import sys
+import shutil
 from pathlib import Path
 from typing import Dict, List, Any
 
@@ -18,134 +21,173 @@ sys.path.insert(0, str(Path(__file__).parent))
 from uefi_extractor import UEFIExtractor
 from gpio_detector import GPIOTableDetector
 from gpio_parser import GPIOParser
-from bios2gpio import compose_gpio_state
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(message)s'
+)
 logger = logging.getLogger(__name__)
 
-def extract_best_state(image_path: Path, platform: str) -> Dict[str, Any]:
-    """Runs the full detection & blind composition pipeline on an image."""
+def extract_pads_from_image(image_path: Path, platform: str) -> Dict[str, Any]:
+    """
+    Run the extraction pipeline on a single image and return the pad dict.
+    """
     logger.info(f"Extracting from: {image_path.name}...")
+
+    extractor = None
     try:
+        # 1. Extract
         extractor = UEFIExtractor(str(image_path))
         bios_region = extractor.get_bios_region()
+        modules = extractor.find_modules([]) # No pattern needed for raw scan fallback
+        all_binaries = extractor.get_all_binary_files()
 
+        # 2. Detect
         detector = GPIOTableDetector(platform=platform)
-        # Scan only BIOS region for speed and accuracy (assuming monolithic table)
-        raw_tables = detector.scan_file(bios_region, min_entries=10)
+        files_to_scan = []
+        if modules: files_to_scan.extend([m['path'] for m in modules])
+        if bios_region and bios_region.exists(): files_to_scan.append(bios_region)
+        if not modules: files_to_scan.extend(all_binaries)
+        files_to_scan = list(set(files_to_scan))
 
-        if not raw_tables:
-            logger.error(f"No tables found in {image_path.name}")
+        all_tables = []
+        for file_path in files_to_scan:
+            tables = detector.scan_file(file_path)
+            all_tables.extend(tables)
+
+        if not all_tables:
+            logger.error(f"  No GPIO tables found in {image_path.name}")
             return {}
 
-        # Use detector to find the best physical base table
-        filtered = detector.filter_best_tables(raw_tables)
-        if not filtered:
+        # 3. Select Best Tables (Winner + VGPIOs)
+        # We trust the detector's internal sorting (signature match + size heuristic)
+        best_tables = detector.filter_best_tables(all_tables)
+        if not best_tables:
+            logger.error(f"  No valid tables found in {image_path.name}")
             return {}
-        base_table = filtered[0]
 
-        # Run Blind Composition (no reference, no ghidra for now)
-        # We wrap the result list back to a dict for easy comparison
-        pads_list = compose_gpio_state(raw_tables, base_table, None, None)
-        return {p['name']: p for p in pads_list}
+        logger.info(f"  Found {len(best_tables)} tables.")
+
+        # 4. Parse and Merge
+        parser = GPIOParser(platform=platform)
+        parsed_data = parser.parse_multiple_tables(best_tables)
+        pads_list = parser.merge_tables(parsed_data)
+
+        # Convert to dict keyed by name for comparison
+        return {pad['name']: pad for pad in pads_list}
 
     except Exception as e:
-        logger.error(f"Extraction failed: {e}")
+        logger.error(f"  Extraction failed: {e}")
         return {}
+    finally:
+        # cleanup handled by UEFIExtractor destructor, but explicit check helps
+        pass
 
-def compare_subset(pads_a, pads_b, subset_names, label):
-    """Compare a specific subset of pads (Physical or VGPIO)."""
+def compare_pads(pads_a: Dict[str, Any], pads_b: Dict[str, Any], name_a: str, name_b: str):
+    """Compare two sets of pads and print a report."""
+
+    all_keys = sorted(set(pads_a.keys()) | set(pads_b.keys()))
+
     matches = 0
     mismatches = 0
     missing_a = 0
     missing_b = 0
 
-    diffs = []
+    print("\n" + "="*80)
+    print(f"COMPARISON REPORT: {name_a} vs {name_b}")
+    print("="*80)
+    print(f"{'Pad Name':<15} | {'Param':<10} | {name_a[:15]:<18} | {name_b[:15]:<18}")
+    print("-" * 80)
 
-    for name in subset_names:
-        pa = pads_a.get(name)
-        pb = pads_b.get(name)
+    # Fields to compare
+    fields = ['mode', 'direction', 'output_value', 'reset', 'termination', 'dw0', 'dw1']
 
-        if not pa: missing_a += 1; continue
-        if not pb: missing_b += 1; continue
+    for name in all_keys:
+        pad_a = pads_a.get(name)
+        pad_b = pads_b.get(name)
 
-        # Compare critical fields
-        # We compare Mode, and if Mode==GPIO, we compare Direction/Output
-        # We ignore Reset usually as it's often same, but let's be strict
+        if not pad_a:
+            print(f"{name:<15} | {'MISSING':<10} | {'(Not present)':<18} | {'Present':<18}")
+            missing_a += 1
+            continue
+        if not pad_b:
+            print(f"{name:<15} | {'MISSING':<10} | {'Present':<18} | {'(Not present)':<18}")
+            missing_b += 1
+            continue
 
-        match = True
-        # Mode check (NF1 vs GPIO)
-        if pa['mode'] != pb['mode']: match = False
+        # Compare fields
+        diffs = []
 
-        # If GPIO, check direction/value
-        if match and pa['mode'] == 'GPIO':
-            if pa.get('direction') != pb.get('direction'): match = False
-            if pa.get('output_value') != pb.get('output_value'): match = False
+        # Logical Check
+        if pad_a['mode'] != pad_b['mode']:
+            diffs.append(('Mode', pad_a['mode'], pad_b['mode']))
+        elif pad_a['mode'] == 'GPIO':
+            # If both GPIO, check direction/output
+            if pad_a.get('direction') != pad_b.get('direction'):
+                diffs.append(('Dir', pad_a.get('direction'), pad_b.get('direction')))
+            if pad_a.get('output_value') != pad_b.get('output_value'):
+                diffs.append(('Val', str(pad_a.get('output_value')), str(pad_b.get('output_value'))))
 
-        if match:
-            matches += 1
-        else:
+        if pad_a['reset'] != pad_b['reset']:
+            diffs.append(('Reset', pad_a['reset'], pad_b['reset']))
+
+        # Raw Register Check (Ultimate Truth)
+        if pad_a['dw0'] != pad_b['dw0'] or pad_a['dw1'] != pad_b['dw1']:
+            # If logical was same but raw diffs (e.g. termination or interrupt flags)
+            if not diffs:
+                if pad_a['termination'] != pad_b['termination']:
+                    diffs.append(('Term', pad_a['termination'], pad_b['termination']))
+                else:
+                    diffs.append(('Raw', 'DW0/1 Diff', 'DW0/1 Diff'))
+
+        if diffs:
             mismatches += 1
-            diffs.append(f"{name}: A={pa['mode']}/{pa.get('direction','')} vs B={pb['mode']}/{pb.get('direction','')}")
+            for field, val_a, val_b in diffs:
+                print(f"{name:<15} | {field:<10} | {str(val_a):<18} | {str(val_b):<18}")
+        else:
+            matches += 1
 
-    total = matches + mismatches + missing_a + missing_b
-    if total == 0: return
-
-    print(f"\n--- {label} Comparison ---")
+    print("-" * 80)
+    total = len(all_keys)
     print(f"Total Pads: {total}")
     print(f"Identical:  {matches} ({matches/total*100:.1f}%)")
-    print(f"Mismatches: {mismatches}")
-    if diffs:
-        print("  Sample Mismatches:")
-        for d in diffs[:5]: print(f"    {d}")
-    if missing_a: print(f"  Missing in A: {missing_a}")
-    if missing_b: print(f"  Missing in B: {missing_b}")
+    print(f"Differences:{mismatches}")
+    print(f"Unique {name_a}: {missing_b}")
+    print(f"Unique {name_b}: {missing_a}")
+    print("="*80)
+
+    if mismatches == 0 and missing_a == 0 and missing_b == 0:
+        print("\n>>> CONCLUSION: The GPIO configurations are BIT-IDENTICAL. <<<")
+        print(">>> You can safely use the exact same gpio.h for both boards. <<<")
+    elif mismatches < 5:
+        print("\n>>> CONCLUSION: Extremely similar. Likely same reference code with minor tweaks. <<<")
+    else:
+        print("\n>>> CONCLUSION: Configurations differ significantly. <<<")
 
 def main():
     parser = argparse.ArgumentParser(description="Compare GPIOs between two BIOS images")
-    parser.add_argument("--image-a", "-a", required=True, help="Reference BIOS image (e.g. MSI)")
-    parser.add_argument("--image-b", "-b", required=True, help="Target BIOS image (e.g. ASRock)")
+    parser.add_argument("--image-a", "-a", required=True, help="First BIOS image")
+    parser.add_argument("--image-b", "-b", required=True, help="Second BIOS image")
     parser.add_argument("--platform", default="alderlake")
     args = parser.parse_args()
 
     path_a = Path(args.image_a)
     path_b = Path(args.image_b)
 
-    pads_a = extract_best_state(path_a, args.platform)
-    pads_b = extract_best_state(path_b, args.platform)
-
-    if not pads_a or not pads_b:
+    if not path_a.exists() or not path_b.exists():
+        logger.error("Input files not found.")
         return 1
 
-    # Separate keys
-    all_keys = set(pads_a.keys()) | set(pads_b.keys())
+    pads_a = extract_pads_from_image(path_a, args.platform)
+    pads_b = extract_pads_from_image(path_b, args.platform)
 
-    physical_keys = sorted([k for k in all_keys if 'VGPIO' not in k])
-    virtual_keys = sorted([k for k in all_keys if 'VGPIO' in k])
+    if not pads_a or not pads_b:
+        logger.error("Failed to extract pads from one or both images.")
+        return 1
 
-    print("\n" + "="*60)
-    print(f"COMPARISON: {path_a.name} (A) vs {path_b.name} (B)")
-    print("="*60)
-
-    compare_subset(pads_a, pads_b, physical_keys, "PHYSICAL GPIOs (Unvirtual)")
-    compare_subset(pads_a, pads_b, virtual_keys, "VIRTUAL GPIOs (VGPIO)")
-
-    print("\n" + "="*60)
-
-    # Heuristic Verdict
-    phys_match_rate = 0
-    phys_common = set(physical_keys) & set(pads_a.keys()) & set(pads_b.keys())
-    if phys_common:
-        matches = sum(1 for k in phys_common if pads_a[k]['mode'] == pads_b[k]['mode']) # Simple mode check
-        phys_match_rate = matches / len(phys_common)
-
-    if phys_match_rate > 0.98:
-        print("VERDICT: Boards likely share the same physical layout.")
-        print("You can trust the 'Unvirtual' GPIOs extracted from ASRock.")
-    else:
-        print("VERDICT: Significant physical differences detected.")
-        print("Verify schematic or use caution.")
+    compare_pads(pads_a, pads_b, path_a.name, path_b.name)
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main())
