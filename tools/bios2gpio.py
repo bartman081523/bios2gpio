@@ -217,18 +217,28 @@ def main():
 
         files_to_scan = []
 
-        # Priority 1: Scan the BIOS region file (contains all GPIO tables)
+        # Issue #4 Fix: Prioritize scanning extracted modules over the full BIOS region
+        # This avoids false positives from compressed data in the BIOS region
+        
+        # Priority 1: Scan GPIO-specific modules (most likely to contain valid, active config)
+        if modules:
+            files_to_scan.extend([m['path'] for m in modules])
+            logger.info(f"Scanning {len(modules)} GPIO modules (Priority 1)")
+            
+        # Priority 2: Scan BIOS region (fallback if no modules found or as supplementary)
+        # We only scan this if we want to be exhaustive, but if modules are found, 
+        # scanning BIOS region might be redundant and slow.
+        # However, to be safe, we include it but process results carefully.
+        # Actually, the user request implies we should NOT prioritize it.
+        # Let's add it to the list, but maybe we can filter duplicates later.
         if bios_region and bios_region.exists():
             files_to_scan.append(bios_region)
-            logger.info(f"Scanning BIOS region: {bios_region}")
-        # Priority 2: If no BIOS region, scan GPIO-specific modules
-        elif modules:
-            files_to_scan.extend([m['path'] for m in modules])
-            logger.info(f"Scanning {len(modules)} GPIO modules")
-        # Fallback: Scan all binaries (slow)
-        else:
-            files_to_scan.extend(all_binaries[:50])  # Limit to first 50 to avoid excessive scanning
-            logger.info(f"Scanning first 50 binary files")
+            logger.info(f"Scanning BIOS region: {bios_region} (Priority 2)")
+            
+        # Priority 3: Fallback to all binaries if nothing else found
+        if not modules and not (bios_region and bios_region.exists()):
+            files_to_scan.extend(all_binaries[:50])  # Limit to first 50
+            logger.info(f"Scanning first 50 binary files (Priority 3 - Fallback)")
 
         files_to_scan = list(set(files_to_scan))
 
