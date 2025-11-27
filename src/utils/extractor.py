@@ -86,10 +86,11 @@ class UEFIExtractor:
         ifdtool_path = self._find_tool('ifdtool')
         if not ifdtool_path:
             # Try coreboot util path
-            coreboot_root = Path(__file__).parent.parent.parent
-            ifdtool_path = coreboot_root / 'util' / 'ifdtool' / 'ifdtool'
+            # From bios2gpio/src/utils/extractor.py, go up to coreboot/util/
+            coreboot_util = Path(__file__).parent.parent.parent.parent.parent / 'util'
+            ifdtool_path = coreboot_util / 'ifdtool' / 'ifdtool'
             if not ifdtool_path.exists():
-                logger.error("ifdtool not found. Please build it in util/ifdtool/")
+                logger.error(f"ifdtool not found at {ifdtool_path}. Please build it in util/ifdtool/")
                 return False
 
         # Check for UEFIExtract
@@ -111,8 +112,9 @@ class UEFIExtractor:
 
         ifdtool_path = self._find_tool('ifdtool')
         if not ifdtool_path:
-            coreboot_root = Path(__file__).parent.parent.parent
-            ifdtool_path = str(coreboot_root / 'util' / 'ifdtool' / 'ifdtool')
+            # From bios2gpio/src/utils/extractor.py, go up to coreboot/util/
+            coreboot_util = Path(__file__).parent.parent.parent.parent.parent / 'util'
+            ifdtool_path = str(coreboot_util / 'ifdtool' / 'ifdtool')
 
         # Run ifdtool to extract regions
         # Note: ifdtool -x creates files in current directory

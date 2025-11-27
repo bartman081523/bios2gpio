@@ -1,0 +1,45 @@
+﻿------------------------------------------------------------------------
+PRO Z690-A WIFI DDR4 / PRO Z690-A DDR4 (MS-7D25) V1.M BIOS Release
+------------------------------------------------------------------------
+
+1. This is AMI BIOS release
+
+2. This BIOS fixes the following problem of the previous version:
+– Modify security setting.
+– Fix Fan setting will be changed after selecting exit without saving.
+– Update ME FW v16.1.38.2676
+
+-  ME Firmware ver: ME_16.1.38.2676 (download)
+   ME Firmware update SOP
+
+3. 2025/08/18
+
+
+[Below information is Traditional Chinese language]
+
+A. AMI BIOS 正式發行
+
+B. 此版本修正下列問題:
+– 修改安全性設定。
+– 修復在選擇「不儲存退出」後風扇設定會被改變的問題。
+– 更新 ME 韌體版本至 v16.1.38.2676。
+
+-  ME Firmware ver: ME_16.1.38.2676 (下載)
+   ME Firmware 更新步驟
+
+C. 更新日期: 公元2025年8月18日
+
+
+[Below information is Simplified Chinese language]
+
+A. AMI BIOS 正式发行
+
+B. 此版本修正下列问题:
+– 修改安全性设定。
+– 修复在选择「不储存退出」后风扇设定会被改变的问题。
+– 更新 ME 韧体版本至 v16.1.38.2676。
+
+-  ME Firmware ver: ME_16.1.38.2676 (下载)
+   ME Firmware 更新步骤
+
+C. 更新日期: 公元2025年8月18号

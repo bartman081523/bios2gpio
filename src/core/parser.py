@@ -11,7 +11,7 @@ import json
 import logging
 from pathlib import Path
 from typing import List, Dict, Optional
-from platforms.alderlake import (
+from ..platforms.alderlake import (
     AlderLakeGpioPadConfig,
     GPIO_GROUPS,
     get_pad_name,

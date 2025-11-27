@@ -6,11 +6,11 @@ from pathlib import Path
 import re
 
 # Add current directory to path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from gpio_detector import GPIOTableDetector
-from gpio_parser import GPIOParser
-from uefi_extractor import UEFIExtractor
+from src.core.detector import GPIOTableDetector
+from src.core.parser import GPIOParser
+from src.utils.extractor import UEFIExtractor
 from platforms import GPIO_MODULE_PATTERNS
 
 # Configure logging

@@ -16,11 +16,16 @@ from pathlib import Path
 # Add current directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from uefi_extractor import UEFIExtractor
-from gpio_detector import GPIOTableDetector
-from gpio_parser import GPIOParser
-from gpio_generator import GPIOGenerator
-from platforms import GPIO_MODULE_PATTERNS
+# Add parent directory to path for imports
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.utils.extractor import UEFIExtractor
+from src.core.detector import GPIOTableDetector
+from src.core.parser import GPIOParser
+from src.core.generator import GPIOGenerator
+from src.platforms import GPIO_MODULE_PATTERNS
 from ghidra_runner import run_ghidra_analysis
 
 # Configure logging
@@ -115,6 +120,8 @@ def main():
     parser.add_argument('--min-entries', type=int, default=10)
     parser.add_argument('--verbose', '-v', action='store_true')
     parser.add_argument('--calibrate-with', help='Path to reference gpio.h for scoring candidates')
+    parser.add_argument('--compose-with', help='Path to reference gpio.h for Oracle Composition')
+    parser.add_argument('--ghidra-metadata', help='Path to Ghidra analysis JSON for Blind Composition')
 
     # Ghidra integration arguments
     parser.add_argument('--analyze-ghidra', action='store_true', help='Run Ghidra headless analysis to find GPIO loops')
@@ -319,53 +326,6 @@ def main():
                         vgpio_groups['VGPIO_PCIE'].append(table)
 
                 best_vgpio_tables = []
-
-                for group_name, candidates in vgpio_groups.items():
-                    if not candidates:
-                        continue
-
-                    best_group_score = -1
-                    best_group_table = None
-
-                    for table in candidates:
-                        # Parse this table (parser handles VGPIO naming based on size)
-                        pads = parser.parse_table(table)
-
-                        # Score it
-                        score = 0
-                        valid_pads = 0
-                        for pad in pads:
-                            name = pad['name']
-                            if name in ref_modes:
-                                valid_pads += 1
-                                # Mode match?
-                                ext_mode = 0
-                                if pad['mode'].startswith('NF'):
-                                    try: ext_mode = int(pad['mode'][2:])
-                                    except: ext_mode = 1
-
-                                if ext_mode == ref_modes[name]:
-                                    score += 1
-
-                        # For VGPIO, we care about how many valid pads we found that match the reference
-                        logger.info(f"{group_name} Candidate at {table['offset']:x} (Size {table['entry_count']}): Score {score}/{valid_pads}")
-
-                        if score > best_group_score:
-                            best_group_score = score
-                            best_group_table = table
-
-                    if best_group_table:
-                        logger.info(f"Selected best {group_name} table at {best_group_table['offset']:x} with score {best_group_score}")
-                        best_vgpio_tables.append(best_group_table)
-
-                if best_physical_table:
-                    logger.info(f"CALIBRATION WINNER (Physical GPIO): Table at {best_physical_table['offset']:x} with score {best_score}")
-                    # Use the best physical table + best VGPIO tables
-                    best_tables = [best_physical_table] + best_vgpio_tables
-                    logger.info(f"Using {len(best_tables)} tables total (1 physical + {len(best_vgpio_tables)} VGPIO)")
-                else:
-                    logger.warning("Calibration failed to find a valid physical table, using all detected tables")
-                    best_tables = all_tables
             else:
                 best_tables = detector.filter_best_tables(all_tables)
         else:

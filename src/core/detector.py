@@ -9,7 +9,8 @@ import struct
 import logging
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
-from platforms.alderlake import GPIO_GROUPS, AlderLakeGpioPadConfig, ALDERLAKE_GPIO_SIGNATURE
+from ..platforms.alderlake import GPIO_GROUPS, AlderLakeGpioPadConfig, ALDERLAKE_GPIO_SIGNATURE
+
 
 logger = logging.getLogger(__name__)
 
