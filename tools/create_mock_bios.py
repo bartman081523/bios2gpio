@@ -160,6 +160,40 @@ def create_mock_vgpio_table(variant: str = "standard", stride: int = 20) -> byte
     
     return b''.join(entries)
 
+def create_mock_invalid_gpio_table(variant: str = "invalid_mode") -> bytes:
+    """
+    Create a mock GPIO table with INVALID entries to test validation logic.
+    
+    Args:
+        variant: Type of invalidity:
+            - "invalid_mode": Mode > 7
+            - "invalid_reset": Reset > 3 (impossible with 2 bits, but maybe reserved bits set?)
+                              Actually reset is 2 bits, so 0-3 are always valid integers.
+                              But we can test if we can force other bits? No, mask is 2 bits.
+                              So "invalid_reset" is hard to generate unless we assume logic checks for specific values.
+            - "all_ones": 0xFFFFFFFF
+            - "all_zeros": 0x00000000
+    """
+    entries = []
+    
+    if variant == "invalid_mode":
+        # Generate entries with Mode = 8 (1000 binary)
+        # DW0[13:10] = 1000
+        for i in range(50):
+            dw0 = (8 << 10) | (1 << 30) # Mode 8, Reset 1
+            dw1 = 0
+            entries.append(struct.pack('<II', dw0, dw1))
+            
+    elif variant == "all_ones":
+        for i in range(50):
+            entries.append(struct.pack('<II', 0xFFFFFFFF, 0xFFFFFFFF))
+            
+    elif variant == "all_zeros":
+        for i in range(50):
+            entries.append(struct.pack('<II', 0, 0))
+            
+    return b''.join(entries)
+
 def create_mock_bios(variant_physical: str = "standard", 
                      variant_vgpio: str = "standard", 
                      vgpio_stride: int = 20) -> bytes:
