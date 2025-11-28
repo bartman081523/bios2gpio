@@ -101,9 +101,13 @@ class UEFIExtractor:
 
         return True
 
-    def extract_bios_region(self) -> Path:
+    def extract_bios_region(self, platform: str = 'adl') -> Path:
         """
         Extract BIOS region from IFD-formatted image using ifdtool.
+        
+        Args:
+            platform: Platform-specific IFD format (e.g., 'adl' for Alder Lake)
+                     Defaults to 'adl' as that is the primary supported platform.
 
         Returns:
             Path to extracted BIOS region
@@ -118,7 +122,12 @@ class UEFIExtractor:
 
         # Run ifdtool to extract regions
         # Note: ifdtool -x creates files in current directory
-        cmd = [ifdtool_path, '-x', str(self.bios_image)]
+        # CRITICAL: Use -p platform flag for correct IFD parsing on modern platforms
+        # Without -p adl, Alder Lake BIOS regions are incorrectly extracted:
+        #   - BIOS region overlaps with IFD and ME regions
+        #   - Extracted file is mostly 0xFF padding
+        #   - GPIO tables are not found or wrong tables are selected
+        cmd = [ifdtool_path, '-x', '-p', platform, str(self.bios_image)]
 
         try:
             result = subprocess.run(
