@@ -109,6 +109,11 @@ class UEFIExtractor:
             platform: Platform-specific IFD format (e.g., 'adl' for Alder Lake)
                      Defaults to 'adl' as that is the primary supported platform.
 
+        Args:
+            platform: Platform-specific IFD format (e.g., 'adl' for Alder Lake)
+                     Defaults to 'adl' (Alder Lake) as that is the only supported
+                     platform in bios2gpio currently.
+
         Returns:
             Path to extracted BIOS region
         """
