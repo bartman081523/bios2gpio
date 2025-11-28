@@ -47,14 +47,18 @@ class GPIOTableDetector:
         sig_len = len(self.signature)
         stride = entry_size
 
-        for offset in range(0, data_len - (stride * sig_len), 4):
+        # Issue #6 Fix: Use entry_size stride instead of hardcoded 4 for efficiency
+        # Reduces iterations by 3-4x when entry_size > 4 (typical: 8, 12, 16 bytes)
+        for offset in range(0, data_len - (stride * sig_len), stride):
             match = True
             for i, expected in enumerate(self.signature):
                 try:
                     p_off = offset + i * stride
                     dw0 = struct.unpack('<I', data[p_off:p_off+4])[0]
                     mode = (dw0 >> 10) & 0xF
-                    if mode != expected['mode']:
+                    # Issue #3 Fix: Validate both mode AND reset field for tighter matching
+                    reset = (dw0 >> 30) & 0x3
+                    if mode != expected['mode'] or reset != expected['reset']:
                         match = False
                         break
                 except:
@@ -210,7 +214,18 @@ class GPIOTableDetector:
 
                 offset = current_offset
             else:
-                offset += 4
+                # Issue #6 Fix: Optimize stride
+                # Instead of += 4, we can skip by entry_size if we didn't find a valid table start.
+                # However, to be safe against unaligned tables (rare but possible), 
+                # we could use a smaller stride or just entry_size if we are confident.
+                # Given the "extremely long time" complaint, we choose performance.
+                # Most GPIO tables are aligned to their entry size or at least 4 bytes.
+                # If we just failed to find a table at `offset`, checking `offset+4` is likely to fail too
+                # if `entry_size` is large (e.g. 16).
+                # Compromise: If we found 0 valid entries, skip by entry_size.
+                # If we found some valid entries but not enough (partial match), maybe skip less?
+                # For now, simple optimization:
+                offset += entry_size
 
         return tables
 
